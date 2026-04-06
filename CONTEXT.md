@@ -87,7 +87,7 @@ Composants génériques (Base UI + Tailwind + `cva`), sans accès Prisma ni acti
 
 | Fichier | Composant | Description |
 |---------|-----------|-------------|
-| [`profile-form.tsx`](components/profile/profile-form.tsx) | `ProfileForm` *(client)* | `updateProfileNameAction` ; changement d'e-mail via `authPost` (`/email-otp/request-email-change`, `/email-otp/change-email`). |
+| [`profile-form.tsx`](components/profile/profile-form.tsx) | `ProfileForm` *(client)* | `updateProfileNameAction` ; changement de mot de passe via `authPost` (`/change-password`) ; changement d'e-mail via `authPost` (`/email-otp/request-email-change`, `/email-otp/change-email`). |
 
 ### [`components/select/`](components/select/)
 
@@ -109,7 +109,6 @@ Voir [`.env.example`](.env.example) : limites `MAX_*`, SMTP, Better Auth, `DATAB
 | [`lib/auth.ts`](lib/auth.ts) | `auth` (Better Auth) | Config adapter Prisma, `emailAndPassword`, plugin `emailOTP` + `changeEmail.enabled`, champs utilisateur additionnels `isSuperAdmin`. |
 | [`lib/auth-server.ts`](lib/auth-server.ts) | `getSession()`, `requireUserId(): Promise<string>` | Session HTTP via `auth.api.getSession`. |
 | [`lib/auth-client.ts`](lib/auth-client.ts) | `authClient`, `signIn`, `signUp`, `signOut`, `useSession` | Client React Better Auth + `emailOTPClient`. |
-| [`lib/auth-api.ts`](lib/auth-api.ts) | `authPost<T>(path, body)` | `fetch` POST JSON vers `/api/auth/...` (OTP, changement d'e-mail). |
 | [`lib/prisma.ts`](lib/prisma.ts) | `default` PrismaClient | Singleton avec adaptateur `pg`. |
 | [`lib/safe-action.ts`](lib/safe-action.ts) | `actionClient`, `authedAction` | Client safe-action + middleware session obligatoire. |
 | [`lib/smtp.ts`](lib/smtp.ts) | `getSmtpTransport()` | Transport Nodemailer (exige `SMTP_HOST` / `SMTP_PORT`). |
@@ -159,7 +158,7 @@ Toutes les actions : `"use server"`, schémas **Zod**, `authedAction` sauf menti
 - `/waitlists/[id]` : détail, rejoindre, actualiser, classement (vue selon `visibilityMode` / admin).
 - `/waitlists/mine`, `/waitlists/joined` : listes créées / inscriptions.
 - `/join` : saisie du code liste privée.
-- `/profile` : pseudo + changement d'e-mail par OTP.
+- `/profile` : pseudo, changement de mot de passe (session + mot de passe actuel), changement d'e-mail par OTP.
 - `/admin/waitlists/[id]` : onglets en attente / validés / refusés / journal.
 - `/super/waitlists` : toutes les listes (super-admin uniquement).
 

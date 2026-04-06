@@ -1,16 +1,15 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { toast } from "sonner"
-import { authClient } from "@/lib/auth-client"
-import { authPost } from "@/lib/auth-api"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Card, CardContent } from "@/components/ui/card"
+import { authClient } from "@/lib/auth-client"
 import { useTranslations } from "next-intl"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { toast } from "sonner"
 
 export function LoginForm() {
   const router = useRouter()
@@ -47,36 +46,39 @@ export function LoginForm() {
 
   async function onSendOtp() {
     setLoading(true)
-    try {
-      await authPost("/email-otp/send-verification-otp", {
-        email: email.trim(),
-        type: "sign-in",
-      })
-      setOtpSent(true)
-      toast.success(t("toastCodeSent"))
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : tc("error"))
-    } finally {
-      setLoading(false)
+    const { data, error } = await authClient.emailOtp.sendVerificationOtp({
+      email: email.trim(),
+      type: "sign-in",
+    });
+
+    setLoading(false)
+    if (error) {
+      toast.error(error.message || tc("error"))
+      return
     }
+
+    setOtpSent(true)
+    toast.success(t("toastCodeSent"))
   }
 
   async function onOtpLogin(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
-    try {
-      await authPost("/sign-in/email-otp", {
-        email: email.trim(),
-        otp: otp.trim(),
-      })
-      toast.success(t("toastConnected"))
-      router.push("/waitlists")
-      router.refresh()
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : tc("error"))
-    } finally {
-      setLoading(false)
+
+    const { data, error } = await authClient.emailOtp.sendVerificationOtp({
+      email: email.trim(),
+      type: "sign-in",
+    });
+
+    setLoading(false)
+    if (error) {
+      toast.error(error.message || tc("error"))
+      return
     }
+
+    toast.success(t("toastConnected"))
+    router.push("/waitlists")
+    router.refresh()
   }
 
   return (
