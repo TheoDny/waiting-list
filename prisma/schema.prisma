@@ -1,8 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -12,16 +10,31 @@ datasource db {
   provider = "postgresql"
 }
 
+enum WaitlistVisibilityMode {
+  VIEW_ALL
+  VIEW_YOURSELF
+}
+
+enum WaitlistMemberStatus {
+  PENDING
+  APPROVED
+  REFUSED
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String
   email         String
   emailVerified Boolean   @default(false)
   image         String?
+  isSuperAdmin  Boolean   @default(false)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  ownedWaitlists Waitlist[]       @relation("WaitlistOwner")
+  waitlistMembers WaitlistMember[]
+  adminLogs       WaitlistAdminLog[]
 
   @@unique([email])
   @@map("user")
@@ -73,4 +86,55 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model Waitlist {
+  id              String                 @id @default(cuid())
+  name            String                 @unique
+  isPublic        Boolean                @default(true)
+  joinCode        String?                @unique
+  visibilityMode  WaitlistVisibilityMode @default(VIEW_ALL)
+  paused          Boolean                @default(false)
+  ownerId         String
+  owner           User                   @relation("WaitlistOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  members         WaitlistMember[]
+  adminLogs       WaitlistAdminLog[]
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+
+  @@index([ownerId])
+  @@index([isPublic])
+  @@map("waitlist")
+}
+
+model WaitlistMember {
+  id              String               @id @default(cuid())
+  waitlistId      String
+  waitlist        Waitlist             @relation(fields: [waitlistId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  displayName     String
+  status          WaitlistMemberStatus @default(PENDING)
+  joinedAt        DateTime             @default(now())
+  lastRefreshedAt DateTime?
+
+  @@unique([waitlistId, userId])
+  @@unique([waitlistId, displayName])
+  @@index([waitlistId])
+  @@index([userId])
+  @@map("waitlist_member")
+}
+
+model WaitlistAdminLog {
+  id          String   @id @default(cuid())
+  waitlistId  String
+  waitlist    Waitlist @relation(fields: [waitlistId], references: [id], onDelete: Cascade)
+  adminUserId String
+  admin       User     @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+  action      String
+  payload     Json?
+  createdAt   DateTime @default(now())
+
+  @@index([waitlistId, createdAt])
+  @@map("waitlist_admin_log")
 }

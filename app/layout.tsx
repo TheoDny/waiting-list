@@ -1,10 +1,11 @@
 
 import { cn } from "@/lib/utils";
-import { getLocale } from "next-intl/server";
+import { getLocale, getMessages } from "next-intl/server";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/sonner";
 import { ConfirmDialogProvider } from "@/provider/ConfirmationProvider";
 import { NextIntlClientProvider } from "next-intl";
 import "./globals.css";
@@ -22,6 +23,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const locale = await getLocale()
+  const messages = await getMessages()
   const appName = process.env.NEXT_PUBLIC_APP_NAME || "Waiting List"
   return (
     <html
@@ -44,9 +46,10 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <TooltipProvider delay={100}>
-            <NextIntlClientProvider>
+            <NextIntlClientProvider locale={locale} messages={messages}>
               <ConfirmDialogProvider>
                 {children}
+                <Toaster richColors closeButton position="top-center" />
               </ConfirmDialogProvider>
             </NextIntlClientProvider>
           </TooltipProvider>

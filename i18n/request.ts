@@ -5,18 +5,12 @@ export const IMPLEMENTED_LOCALE = ["en", "fr"]
 
 export default getRequestConfig(async () => {
     try {
-        let locale =
-            (await cookies()).get("NEXT_LOCALE")?.value ||
-            (navigator.language.split("-")[0] === "fr" ? "fr" : "en")
+        let locale = (await cookies()).get("NEXT_LOCALE")?.value ?? "en"
 
         if (!IMPLEMENTED_LOCALE.includes(locale)) {
             const h = (await headers()).get("accept-language")
-            let l
-            if (h && h.length > 2) {
-                l = h[0] + h[1]
-            }
-
-            locale = l || "en"
+            const prefix = h?.toLowerCase().startsWith("fr") ? "fr" : "en"
+            locale = IMPLEMENTED_LOCALE.includes(prefix) ? prefix : "en"
         }
 
         return {

@@ -1,16 +1,17 @@
 "use client"
 
-import { Button, buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { cn } from "@/lib/utils"
 import { Globe02Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import type { VariantProps } from "class-variance-authority"
-import { useLocale } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import * as React from "react"
 
 interface LanguageSelectorProps
@@ -18,13 +19,13 @@ interface LanguageSelectorProps
         VariantProps<typeof buttonVariants> {
     asChild?: boolean
     showText?: boolean
-    languages?: Array<{ code: string; name: string }>
+    languages?: Array<{ code: string }>
 }
 
 // Default supported languages
 const defaultLanguages = [
-    { code: "en", name: "English" },
-    { code: "fr", name: "Français" },
+    { code: "en" },
+    { code: "fr" },
 ]
 
 export function LanguageSelector({
@@ -33,9 +34,10 @@ export function LanguageSelector({
     ...props
 }: LanguageSelectorProps) {
     const currentLocale = useLocale()
+    const t = useTranslations("Language")
 
     // Get current language display name
-    const currentLanguage = languages.find((lang) => lang.code === currentLocale)?.name || currentLocale
+    const currentLanguage = t(languages.find((lang) => lang.code === currentLocale)?.code as "en" | "fr") || currentLocale
 
     // Change language handler
     const changeLanguage = (locale: string) => {
@@ -48,24 +50,22 @@ export function LanguageSelector({
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger {...props}>
-                <Button
-                    variant="outline"
-                    className="flex gap-2 items-center"
-                    {...props}
+            <DropdownMenuTrigger openOnHover={true}>
+                <div
+                    className={buttonVariants({ variant: "outline", className: "flex gap-2 items-center" })}
                 >
                     <HugeiconsIcon icon={Globe02Icon} className="h-4 w-4" />
                     {showText && <span className="">{currentLanguage}</span>}
-                </Button>
+                </div>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="min-w-24 flex flex-col items-center">
                 {languages.map((lang) => (
                     <DropdownMenuItem
                         key={lang.code}
                         onClick={() => changeLanguage(lang.code)}
-                        className={lang.code === currentLocale ? "bg-accent" : ""}
+                        className={cn(lang.code === currentLocale ? "bg-accent" : "", "cursor-pointer w-full")}
                     >
-                        {lang.name}
+                        {t(lang.code)}
                     </DropdownMenuItem>
                 ))}
             </DropdownMenuContent>
