@@ -8,57 +8,28 @@ export type AuthOtpType =
   | "forget-password"
   | "change-email"
 
-export function getOtpEmailSubject(type: AuthOtpType): string {
-  switch (type) {
-    case "sign-in":
-      return "Votre code de connexion"
-    case "email-verification":
-      return "Vérification de votre adresse e-mail"
-    case "forget-password":
-      return "Réinitialisation du mot de passe"
-    case "change-email":
-      return "Confirmation du changement d'e-mail"
-    default:
-      return "Code de vérification"
-  }
-}
-
-function otpIntro(type: AuthOtpType): string {
-  switch (type) {
-    case "sign-in":
-      return "Utilisez ce code pour vous connecter :"
-    case "email-verification":
-      return "Utilisez ce code pour confirmer votre e-mail :"
-    case "change-email":
-      return "Utilisez ce code pour confirmer votre nouvelle adresse e-mail :"
-    case "forget-password":
-    default:
-      return "Utilisez ce code pour réinitialiser votre mot de passe :"
-  }
+/** Textes déjà résolus via `next-intl` (namespace `Email`). */
+export type OtpEmailCopy = {
+  subject: string
+  intro: string
+  disclaimer: string
+  preview: string
 }
 
 export type OtpEmailProps = {
   otp: string
-  type: AuthOtpType
+  copy: OtpEmailCopy
 }
 
 /**
  * Gabarit OTP pour Better Auth (plugin `emailOTP`).
  */
-export function OtpEmail({ otp, type }: OtpEmailProps) {
-  const subject = getOtpEmailSubject(type)
+export function OtpEmail({ otp, copy }: OtpEmailProps) {
   return (
-    <EmailShell
-      preview={`${subject} — ${otp}`}
-      title={subject}
-      heading={subject}
-    >
-      <Text className="m-0 mb-6 text-[15px] leading-6 text-ink">{otpIntro(type)}</Text>
+    <EmailShell preview={copy.preview} title={copy.subject} heading={copy.subject}>
+      <Text className="m-0 mb-6 text-[15px] leading-6 text-ink">{copy.intro}</Text>
       <SectionCode otp={otp} />
-      <Text className="m-0 mt-6 text-[13px] leading-5 text-muted">
-        Ce code expire sous peu. Si vous n&apos;êtes pas à l&apos;origine de cette demande, ignorez ce
-        message.
-      </Text>
+      <Text className="m-0 mt-6 text-[13px] leading-5 text-muted">{copy.disclaimer}</Text>
     </EmailShell>
   )
 }
@@ -85,13 +56,19 @@ function SectionCode({ otp }: { otp: string }) {
 /**
  * Rend le HTML de l’e-mail OTP via React Email (`render`).
  */
-export async function getOtpEmailHtml(otp: string, type: AuthOtpType): Promise<string> {
-  return render(<OtpEmail otp={otp} type={type} />)
+export async function getOtpEmailHtml(otp: string, copy: OtpEmailCopy): Promise<string> {
+  return render(<OtpEmail otp={otp} copy={copy} />)
 }
 
 OtpEmail.PreviewProps = {
   otp: "482913",
-  type: "sign-in",
+  copy: {
+    subject: "Votre code de connexion",
+    intro: "Utilisez ce code pour vous connecter :",
+    disclaimer:
+      "Ce code expire sous peu. Si vous n'êtes pas à l'origine de cette demande, ignorez ce message.",
+    preview: "Votre code de connexion — 482913",
+  },
 } satisfies OtpEmailProps
 
 export default OtpEmail

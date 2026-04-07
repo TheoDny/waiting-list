@@ -121,7 +121,7 @@ Voir [`.env.example`](.env.example) : limites `MAX_*`, SMTP, Better Auth, `DATAB
 
 | Fichier | Fonctions principales | Description |
 |---------|----------------------|-------------|
-| [`service/mail.service.ts`](service/mail.service.ts) | `sendMail`, `sendAuthOtpEmail`, `sendWaitlistJoinConfirmation`, `sendWaitlistRefreshConfirmation`, `sendWaitlistApprovedEmail`, `sendWaitlistRejectedEmail` | Envoi SMTP. |
+| [`service/mail.service.ts`](service/mail.service.ts) | Idem + `getTranslations` / `getLocale` (`next-intl`, namespace `Email`) pour construire les `*Copy` passés aux gabarits | Envoi SMTP + i18n des e-mails. |
 | [`service/user.service.ts`](service/user.service.ts) | `getUserById`, `updateUserDisplayName`, `isEmailTakenByOther` | Profil utilisateur (Prisma). |
 | [`service/waiting-list.service.ts`](service/waiting-list.service.ts) | `findWaitlistIdByJoinCode`, `listPublicWaitlists`, `listAllWaitlistsForSuperAdmin`, `listPrivateWaitlistsForSuperAdmin`, `assertWaitlistAccess`, `getWaitlistDetailForUi`, `listMyOwnedWaitlists`, `listMyJoinedWaitlists`, `JoinedWaitlistSummary`, `createWaitlist`, `updateWaitlist`, `deleteWaitlistByOwner`, `joinWaitlist`, `leaveWaitlist`, `refreshWaitlistMembership` | Cycle de vie des listes et inscriptions. |
 | [`service/waiting-list-manage.service.ts`](service/waiting-list-manage.service.ts) | `assertCanManageWaitlist`, `getWaitlistMetaForAdmin`, `appendAdminLog`, `listAdminLogs`, `listMembersForAdmin`, `setMemberStatus`, `deleteWaitlistAsAdmin` | Admin liste + journal (tronqué à `MAX_LOG_ACTION_BY_WAITLIST`). |
@@ -141,8 +141,8 @@ Toutes les actions : `"use server"`, schémas **Zod**, `authedAction` sauf menti
 | Fichier | Exports | Description |
 |---------|---------|-------------|
 | [`emails/email-shell.tsx`](emails/email-shell.tsx) | `EmailShell` | Enveloppe commune (Html, Tailwind, Preview, pied de page). |
-| [`emails/otp-email.tsx`](emails/otp-email.tsx) | `OtpEmail`, `getOtpEmailSubject`, `getOtpEmailHtml`, type `AuthOtpType` | E-mails OTP (connexion, vérif, reset, changement d'e-mail). |
-| [`emails/waitlist-email.tsx`](emails/waitlist-email.tsx) | `WaitlistEmail`, `waitlistJoinConfirmationHtml`, `waitlistRefreshConfirmationHtml`, `waitlistApprovedHtml`, `waitlistRejectedHtml` | Notifications liste d'attente. |
+| [`emails/otp-email.tsx`](emails/otp-email.tsx) | `OtpEmail`, `getOtpEmailHtml`, types `AuthOtpType`, `OtpEmailCopy` | Gabarit OTP ; textes fournis par `mail.service` via `next-intl` (`Email`). |
+| [`emails/waitlist-email.tsx`](emails/waitlist-email.tsx) | `WaitlistEmail`, helpers `waitlist*Html`, types `*Copy` | Notifications liste d’attente ; textes résolus dans `mail.service` (`Email`). |
 
 ### `prisma/`
 

@@ -203,6 +203,66 @@
     "logTechnicalDetails": "Technical details",
     "logUnknownAction": "Action: {action}"
   },
+  "Email": {
+    "otp": {
+      "plainText": "Code: {code}",
+      "preview": "{subject} — {code}",
+      "disclaimer": "This code expires soon. If you did not request this, you can ignore this message.",
+      "subject": {
+        "sign-in": "Your sign-in code",
+        "email-verification": "Verify your email address",
+        "forget-password": "Reset your password",
+        "change-email": "Confirm your email change"
+      },
+      "intro": {
+        "sign-in": "Use this code to sign in:",
+        "email-verification": "Use this code to confirm your email:",
+        "forget-password": "Use this code to reset your password:",
+        "change-email": "Use this code to confirm your new email address:"
+      }
+    },
+    "waitlist": {
+      "greeting": "Hello {displayName},",
+      "subject": {
+        "join": "Sign-up: {waitlistName}",
+        "refresh": "Refreshed: {waitlistName}",
+        "approved": "Approved: {waitlistName}",
+        "rejected": "Rejected: {waitlistName}"
+      },
+      "join": {
+        "preview": "Your waitlist sign-up has been recorded.",
+        "title": "Sign-up confirmed",
+        "heading": "Sign-up confirmed",
+        "bodyBefore": "Your sign-up for ",
+        "bodyAfter": " has been recorded."
+      },
+      "refresh": {
+        "preview": "Your place on the list has been refreshed.",
+        "title": "Refresh confirmed",
+        "heading": "Refresh confirmed",
+        "bodyBefore": "Your place on ",
+        "bodyAfter": " has been refreshed."
+      },
+      "approved": {
+        "preview": "Your sign-up was approved by an administrator.",
+        "title": "Sign-up approved",
+        "heading": "Sign-up approved",
+        "bodyBefore": "Your sign-up to ",
+        "bodyMid": " has been ",
+        "highlight": "approved",
+        "bodyAfter": " by an administrator."
+      },
+      "rejected": {
+        "preview": "Your sign-up was rejected by an administrator.",
+        "title": "Sign-up rejected",
+        "heading": "Sign-up rejected",
+        "bodyBefore": "Your sign-up to ",
+        "bodyMid": " has been ",
+        "highlight": "rejected",
+        "bodyAfter": " by an administrator."
+      }
+    }
+  },
   "SuperAdmin": {
     "title": "All waitlists (super admin)",
     "subtitle": "Access admin for any list.",

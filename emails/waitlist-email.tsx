@@ -4,72 +4,82 @@ import { EmailShell } from "./email-shell"
 
 export type WaitlistEmailVariant = "join" | "refresh" | "approved" | "rejected"
 
-type VariantMeta = { title: string; preview: string; heading: string }
-
-function metaFor(variant: WaitlistEmailVariant): VariantMeta {
-  switch (variant) {
-    case "join":
-      return {
-        title: "Inscription confirmée",
-        preview: "Votre inscription à la liste d'attente est enregistrée.",
-        heading: "Inscription confirmée",
-      }
-    case "refresh":
-      return {
-        title: "Actualisation confirmée",
-        preview: "Votre position sur la liste a bien été actualisée.",
-        heading: "Actualisation confirmée",
-      }
-    case "approved":
-      return {
-        title: "Inscription validée",
-        preview: "Votre inscription a été validée par un administrateur.",
-        heading: "Inscription validée",
-      }
-    case "rejected":
-      return {
-        title: "Inscription refusée",
-        preview: "Votre inscription a été refusée par un administrateur.",
-        heading: "Inscription refusée",
-      }
-  }
+type WaitlistCopyBase = {
+  preview: string
+  title: string
+  heading: string
+  greeting: string
 }
 
-export type WaitlistEmailProps = {
-  variant: WaitlistEmailVariant
-  waitlistName: string
-  displayName: string
+export type WaitlistJoinCopy = WaitlistCopyBase & {
+  bodyBefore: string
+  bodyAfter: string
 }
+
+export type WaitlistRefreshCopy = WaitlistCopyBase & {
+  bodyBefore: string
+  bodyAfter: string
+}
+
+export type WaitlistApprovedCopy = WaitlistCopyBase & {
+  bodyBefore: string
+  bodyMid: string
+  highlight: string
+  bodyAfter: string
+}
+
+export type WaitlistRejectedCopy = WaitlistCopyBase & {
+  bodyBefore: string
+  bodyMid: string
+  highlight: string
+  bodyAfter: string
+}
+
+export type WaitlistEmailProps =
+  | { variant: "join"; waitlistName: string; copy: WaitlistJoinCopy }
+  | { variant: "refresh"; waitlistName: string; copy: WaitlistRefreshCopy }
+  | { variant: "approved"; waitlistName: string; copy: WaitlistApprovedCopy }
+  | { variant: "rejected"; waitlistName: string; copy: WaitlistRejectedCopy }
 
 /**
  * Notifications liées aux listes d’attente (inscription, actualisation, validation, refus).
  */
-export function WaitlistEmail({ variant, waitlistName, displayName }: WaitlistEmailProps) {
-  const { title, preview, heading } = metaFor(variant)
+export function WaitlistEmail(props: WaitlistEmailProps) {
+  const { copy } = props
 
   return (
-    <EmailShell preview={preview} title={title} heading={heading}>
-      <Text className="m-0 mb-5 text-[15px] leading-6 text-ink">Bonjour {displayName},</Text>
-      {variant === "join" && (
+    <EmailShell preview={copy.preview} title={copy.title} heading={copy.heading}>
+      <Text className="m-0 mb-5 text-[15px] leading-6 text-ink">{copy.greeting}</Text>
+      {props.variant === "join" && (
         <Text className="m-0 text-[15px] leading-6 text-ink">
-          Votre inscription à la liste d&apos;attente <strong>{waitlistName}</strong> est enregistrée.
+          {props.copy.bodyBefore}
+          <strong>{props.waitlistName}</strong>
+          {props.copy.bodyAfter}
         </Text>
       )}
-      {variant === "refresh" && (
+      {props.variant === "refresh" && (
         <Text className="m-0 text-[15px] leading-6 text-ink">
-          Votre position sur la liste <strong>{waitlistName}</strong> a bien été actualisée.
+          {props.copy.bodyBefore}
+          <strong>{props.waitlistName}</strong>
+          {props.copy.bodyAfter}
         </Text>
       )}
-      {variant === "approved" && (
+      {props.variant === "approved" && (
         <Text className="m-0 text-[15px] leading-6 text-ink">
-          Votre inscription à <strong>{waitlistName}</strong> a été{" "}
-          <span className="font-semibold text-emerald-700">validée</span> par un administrateur.
+          {props.copy.bodyBefore}
+          <strong>{props.waitlistName}</strong>
+          {props.copy.bodyMid}
+          <span className="font-semibold text-emerald-700">{props.copy.highlight}</span>
+          {props.copy.bodyAfter}
         </Text>
       )}
-      {variant === "rejected" && (
+      {props.variant === "rejected" && (
         <Text className="m-0 text-[15px] leading-6 text-ink">
-          Votre inscription à <strong>{waitlistName}</strong> a été{" "}
-          <span className="font-semibold text-red-600">refusée</span> par un administrateur.
+          {props.copy.bodyBefore}
+          <strong>{props.waitlistName}</strong>
+          {props.copy.bodyMid}
+          <span className="font-semibold text-red-600">{props.copy.highlight}</span>
+          {props.copy.bodyAfter}
         </Text>
       )}
     </EmailShell>
@@ -79,39 +89,52 @@ export function WaitlistEmail({ variant, waitlistName, displayName }: WaitlistEm
 /** HTML de confirmation d’inscription (React Email). */
 export async function waitlistJoinConfirmationHtml(params: {
   waitlistName: string
-  displayName: string
+  copy: WaitlistJoinCopy
 }): Promise<string> {
-  return render(<WaitlistEmail variant="join" {...params} />)
+  return render(<WaitlistEmail variant="join" waitlistName={params.waitlistName} copy={params.copy} />)
 }
 
 /** HTML de confirmation d’actualisation de position. */
 export async function waitlistRefreshConfirmationHtml(params: {
   waitlistName: string
-  displayName: string
+  copy: WaitlistRefreshCopy
 }): Promise<string> {
-  return render(<WaitlistEmail variant="refresh" {...params} />)
+  return render(
+    <WaitlistEmail variant="refresh" waitlistName={params.waitlistName} copy={params.copy} />
+  )
 }
 
 /** HTML d’acceptation par un administrateur. */
 export async function waitlistApprovedHtml(params: {
   waitlistName: string
-  displayName: string
+  copy: WaitlistApprovedCopy
 }): Promise<string> {
-  return render(<WaitlistEmail variant="approved" {...params} />)
+  return render(
+    <WaitlistEmail variant="approved" waitlistName={params.waitlistName} copy={params.copy} />
+  )
 }
 
 /** HTML de refus par un administrateur. */
 export async function waitlistRejectedHtml(params: {
   waitlistName: string
-  displayName: string
+  copy: WaitlistRejectedCopy
 }): Promise<string> {
-  return render(<WaitlistEmail variant="rejected" {...params} />)
+  return render(
+    <WaitlistEmail variant="rejected" waitlistName={params.waitlistName} copy={params.copy} />
+  )
 }
 
 WaitlistEmail.PreviewProps = {
   variant: "join",
-  displayName: "Marie",
   waitlistName: "Ouverture du site",
-} satisfies WaitlistEmailProps
+  copy: {
+    preview: "Votre inscription à la liste d'attente est enregistrée.",
+    title: "Inscription confirmée",
+    heading: "Inscription confirmée",
+    greeting: "Bonjour Marie,",
+    bodyBefore: "Votre inscription à la liste d'attente ",
+    bodyAfter: " est enregistrée.",
+  },
+} satisfies Extract<WaitlistEmailProps, { variant: "join" }>
 
 export default WaitlistEmail

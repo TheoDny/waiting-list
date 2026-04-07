@@ -203,6 +203,66 @@
     "logTechnicalDetails": "Détails techniques",
     "logUnknownAction": "Action : {action}"
   },
+  "Email": {
+    "otp": {
+      "plainText": "Code : {code}",
+      "preview": "{subject} — {code}",
+      "disclaimer": "Ce code expire sous peu. Si vous n'êtes pas à l'origine de cette demande, ignorez ce message.",
+      "subject": {
+        "sign-in": "Votre code de connexion",
+        "email-verification": "Vérification de votre adresse e-mail",
+        "forget-password": "Réinitialisation du mot de passe",
+        "change-email": "Confirmation du changement d'e-mail"
+      },
+      "intro": {
+        "sign-in": "Utilisez ce code pour vous connecter :",
+        "email-verification": "Utilisez ce code pour confirmer votre e-mail :",
+        "forget-password": "Utilisez ce code pour réinitialiser votre mot de passe :",
+        "change-email": "Utilisez ce code pour confirmer votre nouvelle adresse e-mail :"
+      }
+    },
+    "waitlist": {
+      "greeting": "Bonjour {displayName},",
+      "subject": {
+        "join": "Inscription : {waitlistName}",
+        "refresh": "Actualisation : {waitlistName}",
+        "approved": "Validé : {waitlistName}",
+        "rejected": "Refusé : {waitlistName}"
+      },
+      "join": {
+        "preview": "Votre inscription à la liste d'attente est enregistrée.",
+        "title": "Inscription confirmée",
+        "heading": "Inscription confirmée",
+        "bodyBefore": "Votre inscription à la liste d'attente ",
+        "bodyAfter": " est enregistrée."
+      },
+      "refresh": {
+        "preview": "Votre position sur la liste a bien été actualisée.",
+        "title": "Actualisation confirmée",
+        "heading": "Actualisation confirmée",
+        "bodyBefore": "Votre position sur la liste ",
+        "bodyAfter": " a bien été actualisée."
+      },
+      "approved": {
+        "preview": "Votre inscription a été validée par un administrateur.",
+        "title": "Inscription validée",
+        "heading": "Inscription validée",
+        "bodyBefore": "Votre inscription à ",
+        "bodyMid": " a été ",
+        "highlight": "validée",
+        "bodyAfter": " par un administrateur."
+      },
+      "rejected": {
+        "preview": "Votre inscription a été refusée par un administrateur.",
+        "title": "Inscription refusée",
+        "heading": "Inscription refusée",
+        "bodyBefore": "Votre inscription à ",
+        "bodyMid": " a été ",
+        "highlight": "refusée",
+        "bodyAfter": " par un administrateur."
+      }
+    }
+  },
   "SuperAdmin": {
     "title": "Toutes les listes (super admin)",
     "subtitle": "Accès à l’administration de n’importe quelle liste.",
