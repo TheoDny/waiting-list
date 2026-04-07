@@ -131,19 +131,25 @@ export type WaitlistDetailForUi = {
     canRefresh: boolean
     nextRefreshAt: Date | null
   } | null
-  /** Rank among PENDING+APPROVED (sorted). */
+  /** Rank among PENDING only (sorted). */
   myRank: number | null
-  /** When admin or VIEW_ALL: full rows. When VIEW_YOURSELF and not admin: only self + placeholders. */
+  /** Count of PENDING members (full queue size). */
+  pendingTotalCount: number
+  /** When VIEW_ALL: full rows. When VIEW_YOURSELF: window around the user (or top blurred rows if not pending). */
   displayRows: Array<{
     id: string
     displayName: string
-    joinedAt: Date
+    joinedAt: Date | null
     lastRefreshedAt: Date | null
-    status: (typeof WaitlistMemberStatus)[keyof typeof WaitlistMemberStatus]
     isSelf: boolean
     blurName: boolean
+    /** 1-based position in the pending queue. */
+    rank: number
   }>
-  otherCount: number
+  /** Pending members with better rank than the first displayed row (VIEW_YOURSELF window). */
+  rankingHiddenAbove: number
+  /** Pending members with worse rank than the last displayed row (VIEW_YOURSELF window). */
+  rankingHiddenBelow: number
 }
 
 export async function getWaitlistDetailForUi(
@@ -174,7 +180,6 @@ export async function getWaitlistDetailForUi(
   }
 
   const isOwner = waitlist.ownerId === userId
-  const isAdminView = isOwner || superA
 
   const allMembers = await prisma.waitlistMember.findMany({
     where: { waitlistId },
@@ -182,7 +187,7 @@ export async function getWaitlistDetailForUi(
   })
 
   const rankedPool = allMembers.filter(
-    (m) => m.status === WaitlistMemberStatus.PENDING || m.status === WaitlistMemberStatus.APPROVED
+    (m) => m.status === WaitlistMemberStatus.PENDING
   )
   const sortedRanked = sortMembersByRanking(rankedPool)
   const myMembershipRow = allMembers.find((m) => m.userId === userId) ?? null
@@ -205,37 +210,81 @@ export async function getWaitlistDetailForUi(
     ? rankInSortedList(sortedRanked, userId, (m) => m.userId)
     : null
 
+  const pendingTotalCount = sortedRanked.length
   const showAllNames =
-    isAdminView || waitlist.visibilityMode === WaitlistVisibilityMode.VIEW_ALL
+    waitlist.visibilityMode === WaitlistVisibilityMode.VIEW_ALL
 
   let displayRows: WaitlistDetailForUi["displayRows"] = []
-  let otherCount = 0
+  let rankingHiddenAbove = 0
+  let rankingHiddenBelow = 0
+
+  const RANK_WINDOW = 10
 
   if (showAllNames) {
-    displayRows = sortedRanked.map((m) => ({
+    displayRows = sortedRanked.map((m, i) => ({
       id: m.id,
       displayName: m.displayName,
       joinedAt: m.joinedAt,
       lastRefreshedAt: m.lastRefreshedAt,
-      status: m.status,
       isSelf: m.userId === userId,
       blurName: false,
+      rank: i + 1,
     }))
+  } else if (pendingTotalCount === 0) {
+    displayRows = []
   } else {
     const selfInRanked = sortedRanked.find((m) => m.userId === userId)
-    otherCount = sortedRanked.length - (selfInRanked ? 1 : 0)
-    if (selfInRanked) {
-      displayRows = [
-        {
-          id: selfInRanked.id,
-          displayName: selfInRanked.displayName,
-          joinedAt: selfInRanked.joinedAt,
-          lastRefreshedAt: selfInRanked.lastRefreshedAt,
-          status: selfInRanked.status,
-          isSelf: true,
-          blurName: false,
-        },
-      ]
+    if (!selfInRanked) {
+      const k = Math.min(pendingTotalCount, RANK_WINDOW)
+      displayRows = Array.from({ length: k }, (_, i) => ({
+        id: `phantom-${i + 1}`,
+        displayName: "········",
+        joinedAt: null,
+        lastRefreshedAt: null,
+        isSelf: false,
+        blurName: true,
+        rank: i + 1,
+      }))
+      rankingHiddenBelow = pendingTotalCount - k
+    } else {
+      const R = rankInSortedList(sortedRanked, userId, (m) => m.userId)!
+      const startAbove = Math.max(1, R - RANK_WINDOW)
+      const endBelow = Math.min(pendingTotalCount, R + RANK_WINDOW)
+      const rows: WaitlistDetailForUi["displayRows"] = []
+      for (let rank = startAbove; rank < R; rank++) {
+        rows.push({
+          id: `phantom-${rank}`,
+          displayName: "········",
+          joinedAt: null,
+          lastRefreshedAt: null,
+          isSelf: false,
+          blurName: true,
+          rank,
+        })
+      }
+      rows.push({
+        id: selfInRanked.id,
+        displayName: selfInRanked.displayName,
+        joinedAt: selfInRanked.joinedAt,
+        lastRefreshedAt: selfInRanked.lastRefreshedAt,
+        isSelf: true,
+        blurName: false,
+        rank: R,
+      })
+      for (let rank = R + 1; rank <= endBelow; rank++) {
+        rows.push({
+          id: `phantom-${rank}`,
+          displayName: "········",
+          joinedAt: null,
+          lastRefreshedAt: null,
+          isSelf: false,
+          blurName: true,
+          rank,
+        })
+      }
+      displayRows = rows
+      rankingHiddenAbove = startAbove - 1
+      rankingHiddenBelow = pendingTotalCount - endBelow
     }
   }
 
@@ -255,8 +304,10 @@ export async function getWaitlistDetailForUi(
         }
       : null,
     myRank,
+    pendingTotalCount,
     displayRows,
-    otherCount,
+    rankingHiddenAbove,
+    rankingHiddenBelow,
   }
 }
 
@@ -295,9 +346,7 @@ export async function listMyJoinedWaitlists(userId: string) {
     const pool = await prisma.waitlistMember.findMany({
       where: {
         waitlistId: m.waitlistId,
-        status: {
-          in: [WaitlistMemberStatus.PENDING, WaitlistMemberStatus.APPROVED],
-        },
+        status: WaitlistMemberStatus.PENDING,
       },
     })
     const sorted = sortMembersByRanking(pool)

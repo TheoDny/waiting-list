@@ -50,8 +50,7 @@
     "public": "Publique",
     "private": "Privée",
     "pauseSignup": "Inscriptions en pause",
-    "pauseShort": "Pause",
-    "admin": "Admin"
+    "pauseShort": "Pause"
   },
   "Nav": {
     "publicWaitlists": "Listes publiques",
@@ -104,6 +103,9 @@
     "pseudoOnList": "Pseudo sur cette liste",
     "signupPaused": "Les inscriptions sont temporairement fermées.",
     "ranking": "Classement",
+    "rankingPendingCount": "({count, plural, one {# en attente} other {# en attente}})",
+    "rankingMoreAbove": "… {count, plural, one {# autre devant} other {# autres devant}}",
+    "rankingMoreBelow": "… {count, plural, one {# autre derrière} other {# autres derrière}}",
     "noParticipants": "Aucun participant pour l’instant.",
     "toastJoined": "Inscription enregistrée",
     "toastLeft": "Vous avez quitté la liste",

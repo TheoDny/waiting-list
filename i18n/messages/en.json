@@ -50,8 +50,7 @@
     "public": "Public",
     "private": "Private",
     "pauseSignup": "Sign-ups paused",
-    "pauseShort": "Paused",
-    "admin": "Admin"
+    "pauseShort": "Paused"
   },
   "Nav": {
     "publicWaitlists": "Public waitlists",
@@ -104,6 +103,9 @@
     "pseudoOnList": "Nickname on this list",
     "signupPaused": "Sign-ups are temporarily closed.",
     "ranking": "Ranking",
+    "rankingPendingCount": "({count, plural, one {# pending} other {# pending}})",
+    "rankingMoreAbove": "… {count, plural, one {# other ahead} other {# others ahead}}",
+    "rankingMoreBelow": "… {count, plural, one {# other behind} other {# others behind}}",
     "noParticipants": "No participants yet.",
     "toastJoined": "Sign-up saved",
     "toastLeft": "You left the list",

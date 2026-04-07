@@ -78,7 +78,7 @@ Composants génériques (Base UI + Tailwind + `cva`), sans accès Prisma ni acti
 | Fichier | Composant | Description |
 |---------|-----------|-------------|
 | [`public-waitlist-search.tsx`](components/waitlist/public-waitlist-search.tsx) | `PublicWaitlistSearch` *(client)* | Champ recherche + navigation `?q=` ; prop optionnelle `actionBasePath` (`/waitlists` ou `/super/waitlists`). |
-| [`waitlist-detail-client.tsx`](components/waitlist/waitlist-detail-client.tsx) | `WaitlistDetailClient` *(client)* | Détail liste : rejoindre (dialog pseudo), actualiser, quitter, classement, lien admin ; `joinCode` en query pour listes privées. |
+| [`waitlist-detail-client.tsx`](components/waitlist/waitlist-detail-client.tsx) | `WaitlistDetailClient` *(client)* | Détail liste : rejoindre (dialog pseudo), actualiser, quitter, classement (PENDING, effectif affiché, fenêtre + rang en **VIEW_YOURSELF**), bouton admin si propriétaire / super-admin ; `joinCode` visible seulement pour eux sur liste privée. |
 | [`join-private-form.tsx`](components/waitlist/join-private-form.tsx) | `JoinPrivateForm` *(client)* | Résolution code → `resolveJoinCodeAction` → redirection avec `?code=`. |
 | [`mine-waitlists-client.tsx`](components/waitlist/mine-waitlists-client.tsx) | `MineWaitlistsClient` *(client)* | CRUD listes possédées (création / édition dialog, suppression confirmée). |
 | [`joined-waitlists-client.tsx`](components/waitlist/joined-waitlists-client.tsx) | `JoinedWaitlistsClient` *(client)* | Inscriptions de l'utilisateur : rang, refresh, quitter. |

@@ -103,9 +103,6 @@ export function WaitlistDetailClient({ detail, joinCode, defaultDisplayName }: P
               <Badge variant="secondary">{tb("private")}</Badge>
             )}
             {w.paused ? <Badge variant="destructive">{tb("pauseSignup")}</Badge> : null}
-            {detail.isOwner || detail.isSuperAdmin ? (
-              <Badge variant="outline">{tb("admin")}</Badge>
-            ) : null}
           </div>
           {!w.isPublic && (detail.isOwner || detail.isSuperAdmin) && w.joinCode ? (
             <p className="text-muted-foreground mt-2 font-mono text-sm">
@@ -188,36 +185,47 @@ export function WaitlistDetailClient({ detail, joinCode, defaultDisplayName }: P
       )}
 
       <div>
-        <h2 className="mb-3 text-lg font-medium">{t("ranking")}</h2>
+        <h2 className="mb-3 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-lg font-medium">
+          <span>{t("ranking")}</span>
+          <span className="text-muted-foreground text-base font-normal">
+            {t("rankingPendingCount", { count: detail.pendingTotalCount })}
+          </span>
+        </h2>
         <Separator className="mb-4" />
-        {detail.displayRows.length === 0 && detail.otherCount === 0 ? (
+        {detail.pendingTotalCount === 0 ? (
           <p className="text-muted-foreground text-sm">{t("noParticipants")}</p>
         ) : (
-          <ul className="space-y-2">
-            {detail.displayRows.map((row) => (
-              <li
-                key={row.id}
-                className="flex items-center justify-between rounded-xl border px-3 py-2 text-sm"
-              >
-                <span className={row.blurName ? "blur-sm select-none" : ""}>{row.displayName}</span>
-                <span className="text-muted-foreground text-xs">
-                  {row.joinedAt.toLocaleString(intlLocale)}
-                </span>
-                <span className="text-muted-foreground text-xs">{statusText(row.status)}</span>
-              </li>
-            ))}
-            {detail.otherCount > 0
-              ? Array.from({ length: Math.min(detail.otherCount, 10) }).map((_, i) => (
+            <ul className="list-none space-y-2">
+              {detail.rankingHiddenAbove > 0 ? (
+                <li className="text-muted-foreground px-3 py-1 text-center text-xs">
+                  {t("rankingMoreAbove", { count: detail.rankingHiddenAbove })}
+                </li>
+              ) : null}
+              {detail.displayRows.map((row) => {
+                const isSelf = row.id === detail.myMembership?.id
+                return (
                   <li
-                    key={`phantom-${i}`}
-                    className="text-muted-foreground flex items-center justify-between rounded-xl border border-dashed px-3 py-2 text-sm"
-                    aria-hidden
+                    key={row.id}
+                    className={cn(
+                      "flex items-center gap-3 rounded-xl border px-3 py-2 text-sm",
+                      row.blurName && "border-dashed",
+                      isSelf && "border-primary bg-primary/10"
+                    )}
                   >
-                    <span className="blur-sm select-none">········</span>
-                    <span className="text-xs">···</span>
-                  </li>
-                ))
-              : null}
+                    <span className="text-muted-foreground w-8 shrink-0 tabular-nums">{row.rank}</span>
+                    <span className={cn("min-w-0 flex-1", row.blurName && "blur-sm select-none")}>
+                      {row.displayName}
+                    </span>
+                    <span className="text-muted-foreground shrink-0 text-xs">
+                      {row.joinedAt ? row.joinedAt.toLocaleString(intlLocale) : "···"}
+                    </span>
+                  </li>)
+              })}
+              {detail.rankingHiddenBelow > 0 ? (
+                <li className="text-muted-foreground px-3 py-1 text-center text-xs">
+                  {t("rankingMoreBelow", { count: detail.rankingHiddenBelow })}
+              </li>
+              ) : null}
           </ul>
         )}
       </div>
