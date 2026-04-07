@@ -58,6 +58,7 @@
     "joined": "Inscriptions",
     "privateCode": "Code privé",
     "superAdmin": "Super admin",
+    "superAdminPrivate": "Listes privées",
     "profile": "Profil",
     "signOut": "Déconnexion",
     "helpWaitlists": {
@@ -205,8 +206,11 @@
   "SuperAdmin": {
     "title": "Toutes les listes (super admin)",
     "subtitle": "Accès à l’administration de n’importe quelle liste.",
+    "titlePrivate": "Listes d’attente privées (super admin)",
+    "subtitlePrivate": "Listes absentes de l’annuaire public (code d’invitation ou accès direct uniquement).",
     "cardLine": "{visibility} · {email} · {count} {membersLabel}",
-    "empty": "Aucune liste ne correspond à votre recherche."
+    "empty": "Aucune liste ne correspond à votre recherche.",
+    "emptyPrivate": "Aucune liste privée ne correspond à votre recherche."
   },
   "Profile": {
     "title": "Mon profil",

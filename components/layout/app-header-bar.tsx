@@ -108,12 +108,20 @@ export function AppHeaderBar({ isSuperAdmin }: AppHeaderBarProps) {
           {t("privateCode")}
         </Link>
         {isSuperAdmin ? (
-          <Link
-            href="/super/waitlists"
-            className={navLinkClassName(pathname.startsWith("/super/waitlists"))}
-          >
-            {t("superAdmin")}
-          </Link>
+          <>
+            <Link
+              href="/super/waitlists"
+              className={navLinkClassName(pathname === "/super/waitlists")}
+            >
+              {t("superAdmin")}
+            </Link>
+            <Link
+              href="/super/waitlists/private"
+              className={navLinkClassName(pathname.startsWith("/super/waitlists/private"))}
+            >
+              {t("superAdminPrivate")}
+            </Link>
+          </>
         ) : null}
       </nav>
       <div className="flex items-center gap-2">

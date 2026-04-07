@@ -63,7 +63,7 @@ Composants génériques (Base UI + Tailwind + `cva`), sans accès Prisma ni acti
 | Fichier | Composant | Description |
 |---------|-----------|-------------|
 | [`app-header.tsx`](components/layout/app-header.tsx) | `AppHeader` *(async RSC)* | En-tête : session + [`getUserById`](service/user.service.ts), délègue la barre à `AppHeaderBar`. |
-| [`app-header-bar.tsx`](components/layout/app-header-bar.tsx) | `AppHeaderBar` *(client)* | Rangée header : liens nav avec style actif (`text-base font-semibold`) selon [`usePathname`](https://nextjs.org/docs/app/api-reference/functions/use-pathname), sinon `text-sm` ; profil, langue, thème, déconnexion. |
+| [`app-header-bar.tsx`](components/layout/app-header-bar.tsx) | `AppHeaderBar` *(client)* | Rangée header : liens nav avec style actif (`text-base font-semibold`) selon [`usePathname`](https://nextjs.org/docs/app/api-reference/functions/use-pathname), sinon `text-sm` ; si super-admin : « Super admin » (`/super/waitlists`) et « Listes privées » / `Nav.superAdminPrivate` (`/super/waitlists/private`) ; profil, langue, thème, déconnexion. |
 | [`sign-out-button.tsx`](components/layout/sign-out-button.tsx) | `SignOutButton` *(client)* | `authClient.signOut()` puis redirection `/login`. |
 
 ### [`components/auth/`](components/auth/)
@@ -123,7 +123,7 @@ Voir [`.env.example`](.env.example) : limites `MAX_*`, SMTP, Better Auth, `DATAB
 |---------|----------------------|-------------|
 | [`service/mail.service.ts`](service/mail.service.ts) | `sendMail`, `sendAuthOtpEmail`, `sendWaitlistJoinConfirmation`, `sendWaitlistRefreshConfirmation`, `sendWaitlistApprovedEmail`, `sendWaitlistRejectedEmail` | Envoi SMTP. |
 | [`service/user.service.ts`](service/user.service.ts) | `getUserById`, `updateUserDisplayName`, `isEmailTakenByOther` | Profil utilisateur (Prisma). |
-| [`service/waiting-list.service.ts`](service/waiting-list.service.ts) | `findWaitlistIdByJoinCode`, `listPublicWaitlists`, `listAllWaitlistsForSuperAdmin`, `assertWaitlistAccess`, `getWaitlistDetailForUi`, `listMyOwnedWaitlists`, `listMyJoinedWaitlists`, `JoinedWaitlistSummary`, `createWaitlist`, `updateWaitlist`, `deleteWaitlistByOwner`, `joinWaitlist`, `leaveWaitlist`, `refreshWaitlistMembership` | Cycle de vie des listes et inscriptions. |
+| [`service/waiting-list.service.ts`](service/waiting-list.service.ts) | `findWaitlistIdByJoinCode`, `listPublicWaitlists`, `listAllWaitlistsForSuperAdmin`, `listPrivateWaitlistsForSuperAdmin`, `assertWaitlistAccess`, `getWaitlistDetailForUi`, `listMyOwnedWaitlists`, `listMyJoinedWaitlists`, `JoinedWaitlistSummary`, `createWaitlist`, `updateWaitlist`, `deleteWaitlistByOwner`, `joinWaitlist`, `leaveWaitlist`, `refreshWaitlistMembership` | Cycle de vie des listes et inscriptions. |
 | [`service/waiting-list-manage.service.ts`](service/waiting-list-manage.service.ts) | `assertCanManageWaitlist`, `getWaitlistMetaForAdmin`, `appendAdminLog`, `listAdminLogs`, `listMembersForAdmin`, `setMemberStatus`, `deleteWaitlistAsAdmin` | Admin liste + journal (tronqué à `MAX_LOG_ACTION_BY_WAITLIST`). |
 
 ### `action/`
@@ -162,6 +162,7 @@ Toutes les actions : `"use server"`, schémas **Zod**, `authedAction` sauf menti
 - `/profile` : pseudo, changement de mot de passe (session + mot de passe actuel), changement d'e-mail par OTP.
 - `/admin/waitlists/[id]` : onglets en attente / validés / refusés / journal.
 - `/super/waitlists` : toutes les listes (super-admin uniquement).
+- `/super/waitlists/private` : listes privées uniquement (`isPublic: false`, super-admin uniquement).
 
 ---
 

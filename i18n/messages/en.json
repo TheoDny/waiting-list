@@ -58,6 +58,7 @@
     "joined": "My sign-ups",
     "privateCode": "Private code",
     "superAdmin": "Super admin",
+    "superAdminPrivate": "Private waitlists",
     "profile": "Profile",
     "signOut": "Sign out",
     "helpWaitlists": {
@@ -205,8 +206,11 @@
   "SuperAdmin": {
     "title": "All waitlists (super admin)",
     "subtitle": "Access admin for any list.",
+    "titlePrivate": "Private waitlists (super admin)",
+    "subtitlePrivate": "Lists that are not discoverable in the public directory (join code or invite only).",
     "cardLine": "{visibility} · {email} · {count} {membersLabel}",
-    "empty": "No list matches your search."
+    "empty": "No list matches your search.",
+    "emptyPrivate": "No private list matches your search."
   },
   "Profile": {
     "title": "My profile",
