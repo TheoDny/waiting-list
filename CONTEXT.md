@@ -62,7 +62,8 @@ Composants génériques (Base UI + Tailwind + `cva`), sans accès Prisma ni acti
 
 | Fichier | Composant | Description |
 |---------|-----------|-------------|
-| [`app-header.tsx`](components/layout/app-header.tsx) | `AppHeader` *(async RSC)* | Barre de navigation : liens zones appel [`getSession`](lib/auth-server.ts) + [`getUserById`](service/user.service.ts) pour le lien super-admin. |
+| [`app-header.tsx`](components/layout/app-header.tsx) | `AppHeader` *(async RSC)* | En-tête : session + [`getUserById`](service/user.service.ts), délègue la barre à `AppHeaderBar`. |
+| [`app-header-bar.tsx`](components/layout/app-header-bar.tsx) | `AppHeaderBar` *(client)* | Rangée header : liens nav avec style actif (`text-base font-semibold`) selon [`usePathname`](https://nextjs.org/docs/app/api-reference/functions/use-pathname), sinon `text-sm` ; profil, langue, thème, déconnexion. |
 | [`sign-out-button.tsx`](components/layout/sign-out-button.tsx) | `SignOutButton` *(client)* | `authClient.signOut()` puis redirection `/login`. |
 
 ### [`components/auth/`](components/auth/)
