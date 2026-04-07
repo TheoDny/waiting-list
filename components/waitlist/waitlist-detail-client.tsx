@@ -128,7 +128,7 @@ export function WaitlistDetailClient({ detail, joinCode, defaultDisplayName }: P
               {detail.myRank != null ? ` · ${tc("estimatedRank")}: ${detail.myRank}` : null}
             </CardDescription>
           </CardHeader>
-          <CardContent className="flex flex-wrap gap-2">
+          <CardContent className="flex flex-wrap gap-2 relative">
             {m.canRefresh ? (
               <Button type="button" disabled={refreshing} onClick={() => executeRefresh({ waitlistId: w.id })}>
                 {tc("refresh")}
@@ -143,7 +143,7 @@ export function WaitlistDetailClient({ detail, joinCode, defaultDisplayName }: P
                   : null}
               </p>
             )}
-            <Button type="button" variant="outline" disabled={leaving} onClick={onLeave}>
+            <Button type="button" variant="outline" className="absolute right-2 top-0" disabled={leaving} onClick={onLeave}>
               {t("leaveList")}
             </Button>
           </CardContent>
