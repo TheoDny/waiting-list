@@ -1,6 +1,6 @@
 /**
  * Sends transactional e-mails via SMTP (see `lib/smtp.ts`).
- * Templates live in `emails/`.
+ * Gabarits React Email dans `emails/` (voir `render` côté templates).
  */
 import { getOtpEmailHtml, getOtpEmailSubject, type AuthOtpType } from "@/emails/otp-email"
 import {
@@ -44,10 +44,11 @@ export async function sendAuthOtpEmail(
   otp: string,
   type: AuthOtpType
 ): Promise<void> {
+  const html = await getOtpEmailHtml(otp, type)
   await sendMail({
     to: email,
     subject: getOtpEmailSubject(type),
-    html: getOtpEmailHtml(otp, type),
+    html,
     text: `Code : ${otp}`,
   })
 }
@@ -56,10 +57,11 @@ export async function sendWaitlistJoinConfirmation(
   email: string,
   params: { waitlistName: string; displayName: string }
 ): Promise<void> {
+  const html = await waitlistJoinConfirmationHtml(params)
   await sendMail({
     to: email,
     subject: `Inscription : ${params.waitlistName}`,
-    html: waitlistJoinConfirmationHtml(params),
+    html,
   })
 }
 
@@ -67,10 +69,11 @@ export async function sendWaitlistRefreshConfirmation(
   email: string,
   params: { waitlistName: string; displayName: string }
 ): Promise<void> {
+  const html = await waitlistRefreshConfirmationHtml(params)
   await sendMail({
     to: email,
     subject: `Actualisation : ${params.waitlistName}`,
-    html: waitlistRefreshConfirmationHtml(params),
+    html,
   })
 }
 
@@ -78,10 +81,11 @@ export async function sendWaitlistApprovedEmail(
   email: string,
   params: { waitlistName: string; displayName: string }
 ): Promise<void> {
+  const html = await waitlistApprovedHtml(params)
   await sendMail({
     to: email,
     subject: `Validé : ${params.waitlistName}`,
-    html: waitlistApprovedHtml(params),
+    html,
   })
 }
 
@@ -89,9 +93,10 @@ export async function sendWaitlistRejectedEmail(
   email: string,
   params: { waitlistName: string; displayName: string }
 ): Promise<void> {
+  const html = await waitlistRejectedHtml(params)
   await sendMail({
     to: email,
     subject: `Refusé : ${params.waitlistName}`,
-    html: waitlistRejectedHtml(params),
+    html,
   })
 }

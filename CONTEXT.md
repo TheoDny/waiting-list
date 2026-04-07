@@ -15,7 +15,7 @@ Documentation technique du dépôt : structure, règles d'accès aux données, e
 | [`action/`](action/) | Server Actions (`next-safe-action`) : validation Zod, session, appel des **services** uniquement. |
 | [`service/`](service/) | Logique métier + Prisma + envoi d'e-mails via `mail.service`. |
 | [`components/`](components/) | UI (shadcn / Base UI) et blocs métier (`waitlist/`, `auth/`, `layout/`). |
-| [`emails/`](emails/) | Gabarits HTML texte pour les e-mails transactionnels. |
+| [`emails/`](emails/) | Gabarits React Email (`@react-email/components` + `render`) pour les e-mails transactionnels. |
 | [`lib/`](lib/) | Auth serveur/client, SMTP, helpers (classement, config env), client d'API auth JSON. |
 | [`prisma/`](prisma/) | Schéma, migrations, seed super-admin. |
 | [`provider/`](provider/) | Contexte dialog de confirmation global. |
@@ -140,9 +140,9 @@ Toutes les actions : `"use server"`, schémas **Zod**, `authedAction` sauf menti
 
 | Fichier | Exports | Description |
 |---------|---------|-------------|
-| [`emails/layout.ts`](emails/layout.ts) | `emailShell`, `escapeHtml` | Enveloppe HTML minimale. |
-| [`emails/otp-email.ts`](emails/otp-email.ts) | `getOtpEmailSubject`, `getOtpEmailHtml`, type `AuthOtpType` | E-mails OTP (connexion, vérif, reset, changement d'e-mail). |
-| [`emails/waitlist-email.ts`](emails/waitlist-email.ts) | `waitlistJoinConfirmationHtml`, `waitlistRefreshConfirmationHtml`, `waitlistApprovedHtml`, `waitlistRejectedHtml` | Notifications liste d'attente. |
+| [`emails/email-shell.tsx`](emails/email-shell.tsx) | `EmailShell` | Enveloppe commune (Html, Tailwind, Preview, pied de page). |
+| [`emails/otp-email.tsx`](emails/otp-email.tsx) | `OtpEmail`, `getOtpEmailSubject`, `getOtpEmailHtml`, type `AuthOtpType` | E-mails OTP (connexion, vérif, reset, changement d'e-mail). |
+| [`emails/waitlist-email.tsx`](emails/waitlist-email.tsx) | `WaitlistEmail`, `waitlistJoinConfirmationHtml`, `waitlistRefreshConfirmationHtml`, `waitlistApprovedHtml`, `waitlistRejectedHtml` | Notifications liste d'attente. |
 
 ### `prisma/`
 
