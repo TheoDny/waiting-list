@@ -59,7 +59,18 @@
     "privateCode": "Code privé",
     "superAdmin": "Super admin",
     "profile": "Profil",
-    "signOut": "Déconnexion"
+    "signOut": "Déconnexion",
+    "helpWaitlists": {
+      "ariaLabel": "Comment fonctionnent les listes d’attente et le classement",
+      "title": "Listes d’attente et classement",
+      "howTitle": "Fonctionnement",
+      "howP1": "Vous pouvez rejoindre des listes publiques ou utiliser un code privé. Tant que votre demande est en attente, vous figurez dans la file. Le propriétaire de la liste peut valider ou refuser les inscriptions.",
+      "howP2": "Vous pouvez actualiser votre place selon un délai (tous les {cooldownDays} jours) pour rester actif dans le classement.",
+      "rankTitle": "Ordre dans la file",
+      "rankIntro": "Le classement ne concerne que les membres au statut En attente.",
+      "rankActive": "Les personnes ayant actualisé leur place dans les {activeDays} derniers jours sont affichées en premier (actives).",
+      "rankInactive": "Les autres sont listés après, par date d’inscription (la plus ancienne en premier)."
+    }
   },
   "Auth": {
     "loginTitle": "Connexion",
@@ -179,7 +190,17 @@
     "confirmRejectTitle": "Confirmer pour refuser ce membre ?",
     "confirmPendingTitle": "Confirmer pour remettre en attente ?",
     "toastStatus": "Statut mis à jour",
-    "toastDeleted": "Liste supprimée"
+    "toastDeleted": "Liste supprimée",
+    "logTitleMemberStatus": "Changement de statut d’un membre",
+    "logTitleWaitlistUpdate": "Paramètres de la liste modifiés",
+    "logMemberStatusLine": "{from} → {to}",
+    "logWaitlistFieldsLine": "Modifications : {fields}",
+    "logField_name": "Nom",
+    "logField_isPublic": "Liste publique ou privée",
+    "logField_visibilityMode": "Affichage des pseudos pour les inscrits",
+    "logField_paused": "Pause des inscriptions",
+    "logTechnicalDetails": "Détails techniques",
+    "logUnknownAction": "Action : {action}"
   },
   "SuperAdmin": {
     "title": "Toutes les listes (super admin)",

@@ -59,7 +59,18 @@
     "privateCode": "Private code",
     "superAdmin": "Super admin",
     "profile": "Profile",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "helpWaitlists": {
+      "ariaLabel": "How waitlists work and how ranking works",
+      "title": "Waitlists and ranking",
+      "howTitle": "How waitlists work",
+      "howP1": "You can join public lists or use a private code. While your request is pending, you appear in the queue. The list owner can approve or reject members.",
+      "howP2": "You can refresh your place on a schedule (every {cooldownDays} days) to stay active in the ranking.",
+      "rankTitle": "Queue order",
+      "rankIntro": "Ranking applies only to members with status Pending.",
+      "rankActive": "Members who refreshed within the last {activeDays} days are listed first (active).",
+      "rankInactive": "Everyone else is ordered by join date (earliest first)."
+    }
   },
   "Auth": {
     "loginTitle": "Sign in",
@@ -179,7 +190,17 @@
     "confirmRejectTitle": "Reject this member?",
     "confirmPendingTitle": "Set this member back to pending?",
     "toastStatus": "Status updated",
-    "toastDeleted": "List deleted"
+    "toastDeleted": "List deleted",
+    "logTitleMemberStatus": "Member status changed",
+    "logTitleWaitlistUpdate": "List settings updated",
+    "logMemberStatusLine": "{from} → {to}",
+    "logWaitlistFieldsLine": "Updated: {fields}",
+    "logField_name": "Name",
+    "logField_isPublic": "Public or private list",
+    "logField_visibilityMode": "Nickname display for members",
+    "logField_paused": "Sign-ups paused",
+    "logTechnicalDetails": "Technical details",
+    "logUnknownAction": "Action: {action}"
   },
   "SuperAdmin": {
     "title": "All waitlists (super admin)",
