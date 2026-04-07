@@ -1,30 +1,30 @@
 /**
  * Waitlists: discovery, membership, refresh, owner CRUD. Prisma only.
  */
-import { generateRandomString } from "better-auth/crypto"
-import { maxMembersPerWaitlist, maxWaitlistsPerUser, REFRESH_COOLDOWN_DAYS } from "@/lib/waitlist-config"
+import prisma from "@/lib/prisma"
+import {
+  maxMembersPerWaitlist,
+  maxWaitlistsPerUser,
+  REFRESH_COOLDOWN_DAYS,
+} from "@/lib/waitlist-config"
 import {
   isActiveForRanking,
   rankInSortedList,
   sortMembersByRanking,
 } from "@/lib/waitlist-ranking"
-import prisma from "@/lib/prisma"
-import { appendAdminLog } from "@/service/waiting-list-manage.service"
 import {
   sendWaitlistJoinConfirmation,
   sendWaitlistRefreshConfirmation,
 } from "@/service/mail.service"
-import { WaitlistMemberStatus, WaitlistVisibilityMode } from "../generated/prisma/enums"
+import { isSuperAdminUser } from "@/service/user.service"
+import { appendAdminLog } from "@/service/waiting-list-manage.service"
+import { generateRandomString } from "better-auth/crypto"
+import {
+  WaitlistMemberStatus,
+  WaitlistVisibilityMode,
+} from "../generated/prisma/enums"
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000
-
-async function isSuperAdminUser(userId: string) {
-  const u = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { isSuperAdmin: true },
-  })
-  return u?.isSuperAdmin ?? false
-}
 
 export async function findWaitlistIdByJoinCode(code: string) {
   const normalized = code.trim().toUpperCase()
@@ -36,14 +36,13 @@ export async function findWaitlistIdByJoinCode(code: string) {
   return w?.id ?? null
 }
 
-export async function listPublicWaitlists(search: string | undefined, userId: string) {
+/** Liste les listes publiques (recherche optionnelle). Ne dépend pas de l’utilisateur. */
+export async function listPublicWaitlists(search: string | undefined) {
   const term = search?.trim()
   return prisma.waitlist.findMany({
     where: {
       isPublic: true,
-      ...(term
-        ? { name: { contains: term, mode: "insensitive" } }
-        : {}),
+      ...(term ? { name: { contains: term, mode: "insensitive" } } : {}),
     },
     orderBy: { createdAt: "desc" },
     select: {
@@ -58,7 +57,9 @@ export async function listPublicWaitlists(search: string | undefined, userId: st
   })
 }
 
-export async function listAllWaitlistsForSuperAdmin(search: string | undefined) {
+export async function listAllWaitlistsForSuperAdmin(
+  search: string | undefined
+) {
   const term = search?.trim()
   return prisma.waitlist.findMany({
     where: term ? { name: { contains: term, mode: "insensitive" } } : {},
@@ -71,7 +72,9 @@ export async function listAllWaitlistsForSuperAdmin(search: string | undefined) 
 }
 
 /** Private waitlists only (`isPublic: false`). Super-admin UI; enforce role at the route / action layer. */
-export async function listPrivateWaitlistsForSuperAdmin(search: string | undefined) {
+export async function listPrivateWaitlistsForSuperAdmin(
+  search: string | undefined
+) {
   const term = search?.trim()
   return prisma.waitlist.findMany({
     where: {
@@ -170,7 +173,7 @@ export type WaitlistDetailForUi = {
 
 export async function getWaitlistDetailForUi(
   waitlistId: string,
-  userId: string,
+  userId: string | null,
   joinCode?: string | null
 ): Promise<WaitlistDetailForUi> {
   await assertWaitlistAccess(waitlistId, userId, joinCode)
@@ -189,13 +192,14 @@ export async function getWaitlistDetailForUi(
         createdAt: true,
       },
     }),
-    isSuperAdminUser(userId),
+    userId ? isSuperAdminUser(userId) : Promise.resolve(false),
   ])
+
   if (!waitlist) {
     throw new Error("Liste introuvable")
   }
 
-  const isOwner = waitlist.ownerId === userId
+  const isOwner = userId != null && waitlist.ownerId === userId
 
   const allMembers = await prisma.waitlistMember.findMany({
     where: { waitlistId },
@@ -206,7 +210,10 @@ export async function getWaitlistDetailForUi(
     (m) => m.status === WaitlistMemberStatus.PENDING
   )
   const sortedRanked = sortMembersByRanking(rankedPool)
-  const myMembershipRow = allMembers.find((m) => m.userId === userId) ?? null
+  const myMembershipRow =
+    userId != null
+      ? (allMembers.find((m) => m.userId === userId) ?? null)
+      : null
 
   let nextRefreshAt: Date | null = null
   let canRefresh = false
@@ -214,7 +221,9 @@ export async function getWaitlistDetailForUi(
     const elapsed = Date.now() - myMembershipRow.lastRefreshedAt.getTime()
     const cooldownMs = REFRESH_COOLDOWN_DAYS * MS_PER_DAY
     if (elapsed < cooldownMs) {
-      nextRefreshAt = new Date(myMembershipRow.lastRefreshedAt.getTime() + cooldownMs)
+      nextRefreshAt = new Date(
+        myMembershipRow.lastRefreshedAt.getTime() + cooldownMs
+      )
     } else {
       canRefresh = true
     }
@@ -222,9 +231,10 @@ export async function getWaitlistDetailForUi(
     canRefresh = true
   }
 
-  const myRank = myMembershipRow
-    ? rankInSortedList(sortedRanked, userId, (m) => m.userId)
-    : null
+  const myRank =
+    myMembershipRow && userId != null
+      ? rankInSortedList(sortedRanked, userId, (m) => m.userId)
+      : null
 
   const pendingTotalCount = sortedRanked.length
   const showAllNames =
@@ -249,7 +259,8 @@ export async function getWaitlistDetailForUi(
   } else if (pendingTotalCount === 0) {
     displayRows = []
   } else {
-    const selfInRanked = sortedRanked.find((m) => m.userId === userId)
+    const selfInRanked =
+      userId != null ? sortedRanked.find((m) => m.userId === userId) : undefined
     if (!selfInRanked) {
       const k = Math.min(pendingTotalCount, RANK_WINDOW)
       displayRows = Array.from({ length: k }, (_, i) => ({
@@ -263,7 +274,7 @@ export async function getWaitlistDetailForUi(
       }))
       rankingHiddenBelow = pendingTotalCount - k
     } else {
-      const R = rankInSortedList(sortedRanked, userId, (m) => m.userId)!
+      const R = rankInSortedList(sortedRanked, userId!, (m) => m.userId)!
       const startAbove = Math.max(1, R - RANK_WINDOW)
       const endBelow = Math.min(pendingTotalCount, R + RANK_WINDOW)
       const rows: WaitlistDetailForUi["displayRows"] = []

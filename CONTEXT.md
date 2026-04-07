@@ -11,7 +11,7 @@ Documentation technique du dépôt : structure, règles d'accès aux données, e
 
 | Dossier | Rôle |
 |--------|------|
-| [`app/`](app/) | App Router : pages publiques protégées `(app)/`, auth `login` / `register`, API [`app/api/auth/[...auth]/route.ts`](app/api/auth/[...auth]/route.ts). |
+| [`app/`](app/) | App Router : zone connectée `(app)/`, zone sans session `(public)/` (listes publiques + détail), auth `login` / `register`, API [`app/api/auth/[...auth]/route.ts`](app/api/auth/[...auth]/route.ts). |
 | [`action/`](action/) | Server Actions (`next-safe-action`) : validation Zod, session, appel des **services** uniquement. |
 | [`service/`](service/) | Logique métier + Prisma + envoi d'e-mails via `mail.service`. |
 | [`components/`](components/) | UI (shadcn / Base UI) et blocs métier (`waitlist/`, `auth/`, `layout/`). |
@@ -62,8 +62,8 @@ Composants génériques (Base UI + Tailwind + `cva`), sans accès Prisma ni acti
 
 | Fichier | Composant | Description |
 |---------|-----------|-------------|
-| [`app-header.tsx`](components/layout/app-header.tsx) | `AppHeader` *(async RSC)* | En-tête : session + [`getUserById`](service/user.service.ts), délègue la barre à `AppHeaderBar`. |
-| [`app-header-bar.tsx`](components/layout/app-header-bar.tsx) | `AppHeaderBar` *(client)* | Rangée header : liens nav avec style actif (`text-base font-semibold`) selon [`usePathname`](https://nextjs.org/docs/app/api-reference/functions/use-pathname), sinon `text-sm` ; si super-admin : « Super admin » (`/super/waitlists`) et « Listes privées » / `Nav.superAdminPrivate` (`/super/waitlists/private`) ; profil, langue, thème, déconnexion. |
+| [`app-header.tsx`](components/layout/app-header.tsx) | `AppHeader` *(async RSC)* | En-tête toujours rendu : session optionnelle + [`getUserById`](service/user.service.ts) si connecté ; délègue à `AppHeaderBar` (`isAuthenticated`, `isSuperAdmin`). |
+| [`app-header-bar.tsx`](components/layout/app-header-bar.tsx) | `AppHeaderBar` *(client)* | Invité : « Listes publiques », aide, langue, thème, lien `Nav.signIn` → `/login`. Connecté : nav complète (mes listes, inscriptions, code privé, super-admin si applicable), profil, déconnexion. Style actif via [`usePathname`](https://nextjs.org/docs/app/api-reference/functions/use-pathname). |
 | [`sign-out-button.tsx`](components/layout/sign-out-button.tsx) | `SignOutButton` *(client)* | `authClient.signOut()` puis redirection `/login`. |
 
 ### [`components/auth/`](components/auth/)
@@ -108,7 +108,7 @@ Voir [`.env.example`](.env.example) : limites `MAX_*`, SMTP, Better Auth, `DATAB
 | Fichier | Exports / signatures | Description |
 |---------|----------------------|-------------|
 | [`lib/auth.ts`](lib/auth.ts) | `auth` (Better Auth) | Config adapter Prisma, `emailAndPassword`, plugin `emailOTP` + `changeEmail.enabled`, champs utilisateur additionnels `isSuperAdmin`. |
-| [`lib/auth-server.ts`](lib/auth-server.ts) | `getSession()`, `requireUserId(): Promise<string>` | Session HTTP via `auth.api.getSession`. |
+| [`lib/auth-server.ts`](lib/auth-server.ts) | `getSession()`| Session HTTP via `auth.api.getSession`. |
 | [`lib/auth-client.ts`](lib/auth-client.ts) | `authClient`, `signIn`, `signUp`, `signOut`, `useSession` | Client React Better Auth + `emailOTPClient`. |
 | [`lib/prisma.ts`](lib/prisma.ts) | `default` PrismaClient | Singleton avec adaptateur `pg`. |
 | [`lib/safe-action.ts`](lib/safe-action.ts) | `actionClient`, `authedAction` | Client safe-action + middleware session obligatoire. |
@@ -153,10 +153,10 @@ Toutes les actions : `"use server"`, schémas **Zod**, `authedAction` sauf menti
 
 ### Pages notables (`app/`)
 
-- `/` : redirection selon session.
+- `/` : redirection vers `/waitlists`.
 - `/login`, `/register` : formulaires Better Auth (mot de passe + OTP).
-- `/waitlists` : listes publiques + recherche (page d'accueil connectée).
-- `/waitlists/[id]` : détail, rejoindre, actualiser, classement (vue selon `visibilityMode` / admin).
+- `/waitlists` : listes publiques + recherche (accessible sans session, layout `(public)/`).
+- `/waitlists/[id]` : détail et classement ; rejoindre nécessite une session (CTA connexion sinon). Liste privée : accès avec `?code=` ou membre / owner / super-admin.
 - `/waitlists/mine`, `/waitlists/joined` : listes créées / inscriptions.
 - `/join` : saisie du code liste privée.
 - `/profile` : pseudo, changement de mot de passe (session + mot de passe actuel), changement d'e-mail par OTP.

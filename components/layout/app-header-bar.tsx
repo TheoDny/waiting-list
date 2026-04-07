@@ -3,6 +3,7 @@
 import { SignOutButton } from "@/components/layout/sign-out-button"
 import { LanguageSelector } from "@/components/select/select-language"
 import { SelectTheme } from "@/components/select/select-theme"
+import { buttonVariants } from "@/components/ui/button"
 import {
   HoverCard,
   HoverCardContent,
@@ -33,6 +34,7 @@ function navLinkClassName(active: boolean) {
 }
 
 export type AppHeaderBarProps = {
+  isAuthenticated: boolean
   isSuperAdmin: boolean
 }
 
@@ -82,7 +84,7 @@ function WaitlistsHelpHover() {
 /**
  * Barre interne du header : navigation (état actif via `usePathname`) et actions compte.
  */
-export function AppHeaderBar({ isSuperAdmin }: AppHeaderBarProps) {
+export function AppHeaderBar({ isAuthenticated, isSuperAdmin }: AppHeaderBarProps) {
   const pathname = usePathname()
   const t = useTranslations("Nav")
 
@@ -92,49 +94,58 @@ export function AppHeaderBar({ isSuperAdmin }: AppHeaderBarProps) {
         <Link href="/waitlists" className={navLinkClassName(isPublicWaitlistsActive(pathname))}>
           {t("publicWaitlists")}
         </Link>
-        <Link
-          href="/waitlists/mine"
-          className={navLinkClassName(pathname.startsWith("/waitlists/mine"))}
-        >
-          {t("myLists")}
-        </Link>
-        <Link
-          href="/waitlists/joined"
-          className={navLinkClassName(pathname.startsWith("/waitlists/joined"))}
-        >
-          {t("joined")}
-        </Link>
-        <Link href="/join" className={navLinkClassName(pathname.startsWith("/join"))}>
-          {t("privateCode")}
-        </Link>
-        {isSuperAdmin ? (
+        {isAuthenticated && (
           <>
             <Link
-              href="/super/waitlists"
-              className={navLinkClassName(pathname === "/super/waitlists")}
+              href="/waitlists/mine"
+              className={navLinkClassName(pathname.startsWith("/waitlists/mine"))}
             >
-              {t("superAdmin")}
+              {t("myLists")}
             </Link>
             <Link
-              href="/super/waitlists/private"
-              className={navLinkClassName(pathname.startsWith("/super/waitlists/private"))}
+              href="/waitlists/joined"
+              className={navLinkClassName(pathname.startsWith("/waitlists/joined"))}
             >
-              {t("superAdminPrivate")}
+              {t("joined")}
             </Link>
+            <Link href="/join" className={navLinkClassName(pathname.startsWith("/join"))}>
+              {t("privateCode")}
+            </Link>
+            {isSuperAdmin && (
+              <>
+                <Link
+                  href="/super/waitlists"
+                  className={navLinkClassName(pathname === "/super/waitlists")}
+                >
+                  {t("superAdmin")}
+                </Link>
+                <Link
+                  href="/super/waitlists/private"
+                  className={navLinkClassName(pathname.startsWith("/super/waitlists/private"))}
+                >
+                  {t("superAdminPrivate")}
+                </Link>
+              </>
+            )}
           </>
-        ) : null}
+        )}
       </nav>
       <div className="flex items-center gap-2">
-        <Link 
-          href="/profile" 
-          className={navLinkClassName(pathname === "/profile" )}
-          >
-          {t("profile")}
-        </Link>
+        {isAuthenticated ? (
+          <Link href="/profile" className={navLinkClassName(pathname === "/profile")}>
+            {t("profile")}
+          </Link>
+        ) : null}
         <WaitlistsHelpHover />
         <LanguageSelector />
         <SelectTheme />
-        <SignOutButton />
+        {isAuthenticated ? (
+          <SignOutButton />
+        ) : (
+          <Link href="/login" className={buttonVariants({ variant: "outline" })}>
+            {t("signIn")}
+          </Link>
+        )}
       </div>
     </div>
   )

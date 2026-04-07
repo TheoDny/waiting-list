@@ -27,7 +27,7 @@ const visibilitySchema = z.enum([WaitlistVisibilityMode.VIEW_ALL, WaitlistVisibi
 export const listPublicWaitlistsAction = authedAction
   .inputSchema(z.object({ search: z.string().optional() }))
   .action(async ({ parsedInput, ctx }) => {
-    const rows = await listPublicWaitlists(parsedInput.search, ctx.userId)
+    const rows = await listPublicWaitlists(parsedInput.search)
     return { rows }
   })
 

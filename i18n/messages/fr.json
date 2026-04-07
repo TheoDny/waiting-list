@@ -60,6 +60,7 @@
     "superAdmin": "Super admin",
     "superAdminPrivate": "Listes privées",
     "profile": "Profil",
+    "signIn": "Connexion",
     "signOut": "Déconnexion",
     "helpWaitlists": {
       "ariaLabel": "Comment fonctionnent les listes d’attente et le classement",
@@ -124,7 +125,8 @@
     "toastRefreshed": "Position actualisée",
     "toastJoinError": "Impossible de rejoindre",
     "toastRefreshError": "Actualisation impossible",
-    "updatedWithin10d": " · À jour (< 10 j.)"
+    "updatedWithin10d": " · À jour (< 10 j.)",
+    "loginToJoin": "Connectez-vous pour rejoindre cette liste."
   },
   "WaitlistMine": {
     "title": "Mes listes créées",

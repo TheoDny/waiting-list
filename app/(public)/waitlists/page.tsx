@@ -1,5 +1,4 @@
 import Link from "next/link"
-import { getSession } from "@/lib/auth-server"
 import { listPublicWaitlists } from "@/service/waiting-list.service"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -10,9 +9,7 @@ type Props = { searchParams: Promise<{ q?: string }> }
 
 export default async function PublicWaitlistsPage({ searchParams }: Props) {
   const { q } = await searchParams
-  const session = await getSession()
-  const userId = session!.user!.id
-  const rows = await listPublicWaitlists(q, userId)
+  const rows = await listPublicWaitlists(q)
   const t = await getTranslations("WaitlistPublic")
   const tc = await getTranslations("Common")
   const tb = await getTranslations("WaitlistBadge")

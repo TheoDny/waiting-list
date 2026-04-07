@@ -12,12 +12,10 @@ export default async function WaitlistDetailPage({ params, searchParams }: Props
   const { id } = await params
   const { code } = await searchParams
   const session = await getSession()
-  if (!session?.user?.id) {
-    notFound()
-  }
+  const userId = session?.user?.id ?? null
   let detail
   try {
-    detail = await getWaitlistDetailForUi(id, session.user.id, code ?? null)
+    detail = await getWaitlistDetailForUi(id, userId, code ?? null)
   } catch {
     notFound()
   }
@@ -26,7 +24,8 @@ export default async function WaitlistDetailPage({ params, searchParams }: Props
     <WaitlistDetailClient
       detail={detail}
       joinCode={code ?? null}
-      defaultDisplayName={session.user.name ?? ""}
+      defaultDisplayName={session?.user?.name ?? ""}
+      isAuthenticated={Boolean(userId)}
     />
   )
 }

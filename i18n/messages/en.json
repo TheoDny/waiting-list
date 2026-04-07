@@ -60,6 +60,7 @@
     "superAdmin": "Super admin",
     "superAdminPrivate": "Private waitlists",
     "profile": "Profile",
+    "signIn": "Sign in",
     "signOut": "Sign out",
     "helpWaitlists": {
       "ariaLabel": "How waitlists work and how ranking works",
@@ -124,7 +125,8 @@
     "toastRefreshed": "Position updated",
     "toastJoinError": "Could not join",
     "toastRefreshError": "Could not refresh",
-    "updatedWithin10d": " · Up to date (< 10 d.)"
+    "updatedWithin10d": " · Up to date (< 10 d.)",
+    "loginToJoin": "Sign in to join this list."
   },
   "WaitlistMine": {
     "title": "Lists I created",

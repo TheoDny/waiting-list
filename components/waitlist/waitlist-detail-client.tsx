@@ -33,15 +33,22 @@ type Props = {
   detail: WaitlistDetailForUi
   joinCode: string | null
   defaultDisplayName: string
+  isAuthenticated?: boolean
 }
 
-export function WaitlistDetailClient({ detail, joinCode, defaultDisplayName }: Props) {
+export function WaitlistDetailClient({
+  detail,
+  joinCode,
+  defaultDisplayName,
+  isAuthenticated = true,
+}: Props) {
   const router = useRouter()
   const locale = useLocale()
   const intlLocale = intlLocaleFor(locale)
   const { confirm } = useConfirm()
   const t = useTranslations("WaitlistDetail")
   const tc = useTranslations("Common")
+  const tnav = useTranslations("Nav")
   const tb = useTranslations("WaitlistBadge")
   const tm = useTranslations("MemberStatus")
   const [joinOpen, setJoinOpen] = useState(false)
@@ -149,37 +156,46 @@ export function WaitlistDetailClient({ detail, joinCode, defaultDisplayName }: P
           </CardContent>
         </Card>
       ) : !w.paused ? (
-        <>
-          <Button type="button" onClick={() => setJoinOpen(true)}>
-            {t("join")}
-          </Button>
-          <Dialog open={joinOpen} onOpenChange={setJoinOpen}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>{t("joinTitle", { name: w.name })}</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-2 py-2">
-                <Label htmlFor="pseudo">{t("pseudoOnList")}</Label>
-                <Input id="pseudo" value={pseudo} onChange={(e) => setPseudo(e.target.value)} maxLength={80} />
-              </div>
-              <DialogFooter>
-                <Button
-                  type="button"
-                  disabled={joining}
-                  onClick={() =>
-                    executeJoin({
-                      waitlistId: w.id,
-                      displayName: pseudo,
-                      joinCode,
-                    })
-                  }
-                >
-                  {tc("confirm")}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </>
+          isAuthenticated ? (
+            <>
+              <Button type="button" onClick={() => setJoinOpen(true)}>
+                {t("join")}
+              </Button>
+              <Dialog open={joinOpen} onOpenChange={setJoinOpen}>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>{t("joinTitle", { name: w.name })}</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-2 py-2">
+                    <Label htmlFor="pseudo">{t("pseudoOnList")}</Label>
+                    <Input id="pseudo" value={pseudo} onChange={(e) => setPseudo(e.target.value)} maxLength={80} />
+                  </div>
+                  <DialogFooter>
+                    <Button
+                      type="button"
+                      disabled={joining}
+                      onClick={() =>
+                        executeJoin({
+                          waitlistId: w.id,
+                          displayName: pseudo,
+                          joinCode,
+                        })
+                      }
+                    >
+                      {tc("confirm")}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-muted-foreground text-sm">{t("loginToJoin")}</p>
+              <Link href="/login" className={cn(buttonVariants())}>
+                {tnav("signIn")}
+              </Link>
+            </div>
+          )
       ) : (
         <p className="text-muted-foreground text-sm">{t("signupPaused")}</p>
       )}

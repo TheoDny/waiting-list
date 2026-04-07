@@ -3,6 +3,14 @@
  */
 import prisma from "@/lib/prisma"
 
+export async function isSuperAdminUser(userId: string) {
+  const u = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { isSuperAdmin: true },
+  })
+  return u?.isSuperAdmin ?? false
+}
+
 export async function getUserById(userId: string) {
   return prisma.user.findUnique({
     where: { id: userId },
