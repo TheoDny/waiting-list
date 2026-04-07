@@ -1,5 +1,5 @@
-import "dotenv/config"
 import { hashPassword } from "better-auth/crypto"
+import "dotenv/config"
 import prisma from "../lib/prisma"
 
 /**
@@ -30,7 +30,9 @@ async function main() {
       where: { id: existing.id },
       data: { isSuperAdmin: true },
     })
-    const hasCredential = existing.accounts.some((a) => a.providerId === "credential")
+    const hasCredential = existing.accounts.some(
+      (a) => a.providerId === "credential"
+    )
     if (!hasCredential) {
       await prisma.account.create({
         data: {
@@ -41,7 +43,7 @@ async function main() {
         },
       })
     }
-    console.info(`Super admin ensured for existing user: ${email}`)
+    console.log(`Super admin ensured for existing user: ${email}`)
     return
   }
 
@@ -63,12 +65,12 @@ async function main() {
     },
   })
 
-  console.info(`Super admin created: ${email}`)
+  console.log(`Super admin created: ${email}`)
 }
 
 main()
   .catch((e) => {
-    console.error(e)
+    console.log(e)
     process.exit(1)
   })
   .finally(async () => {
