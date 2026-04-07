@@ -116,7 +116,7 @@ model WaitlistMember {
   displayName     String
   status          WaitlistMemberStatus @default(PENDING)
   joinedAt        DateTime             @default(now())
-  lastRefreshedAt DateTime?
+  lastRefreshedAt DateTime             @default(now())
 
   @@unique([waitlistId, userId])
   @@unique([waitlistId, displayName])
