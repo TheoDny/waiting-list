@@ -191,7 +191,7 @@ export function WaitlistDetailClient({
           ) : (
             <div className="space-y-3">
               <p className="text-muted-foreground text-sm">{t("loginToJoin")}</p>
-              <Link href="/login" className={cn(buttonVariants())}>
+                <Link href={`/login?callbackUrl=/waitlists/${w.id}`} className={cn(buttonVariants())}>
                 {tnav("signIn")}
               </Link>
             </div>

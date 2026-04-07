@@ -11,7 +11,11 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "sonner"
 
-export function RegisterForm() {
+type Props = {
+  callbackUrl?: string
+}
+
+export function RegisterForm({ callbackUrl }: Props) {
   const router = useRouter()
   const t = useTranslations("Auth")
   const tc = useTranslations("Common")
@@ -28,14 +32,13 @@ export function RegisterForm() {
         name: name.trim(),
         email: email.trim(),
         password,
-        callbackURL: "/waitlists",
+        callbackURL: callbackUrl ?? "/waitlists",
       })
       if (error) {
         toast.error(error.message || t("toastRegisterFailed"))
         return
       }
       toast.success(t("toastAccountCreated"))
-      router.push("/waitlists")
     } catch (err) {
       toast.error(err instanceof Error ? err.message : tc("error"))
     } finally {

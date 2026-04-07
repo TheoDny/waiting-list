@@ -13,7 +13,11 @@ import { useState } from "react"
 import { toast } from "sonner"
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp"
 
-export function LoginForm() {
+type Props = {
+  callbackUrl?: string
+}
+
+export function LoginForm({ callbackUrl }: Props) {
   const router = useRouter()
   const t = useTranslations("Auth")
   const tc = useTranslations("Common")
@@ -30,7 +34,7 @@ export function LoginForm() {
     const { error } = await authClient.signIn.email({
       email: email.trim(),
       password,
-      callbackURL: "/waitlists",
+      callbackURL: callbackUrl ?? "/waitlists",
     })
 
     setLoading(false)
@@ -40,7 +44,6 @@ export function LoginForm() {
     }
 
     toast.success(t("toastConnected"))
-    router.push("/waitlists")
   }
 
   async function onSendOtp() {
@@ -65,6 +68,7 @@ export function LoginForm() {
     const { data, error } = await authClient.signIn.emailOtp({
       email: email.trim(),
       otp: otp.trim(),
+      callbackUrl: callbackUrl ?? "/waitlists",
     });
 
     setLoading(false)
@@ -74,7 +78,6 @@ export function LoginForm() {
     }
 
     toast.success(t("toastConnected"))
-    router.push("/waitlists")
   }
 
   return (
