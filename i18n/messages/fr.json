@@ -84,6 +84,8 @@
     "hasAccount": "Déjà inscrit ?",
     "signInLink": "Connexion",
     "tabPassword": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "passwordMismatch": "Les mots de passe ne correspondent pas.",
     "tabOtp": "E-mail OTP",
     "signIn": "Se connecter",
     "sendCode": "Recevoir un code",

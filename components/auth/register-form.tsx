@@ -23,11 +23,16 @@ export function RegisterForm({ callbackUrl }: Props) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
+  const [confirmPassword, setConfirmPassword] = useState("")
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     try {
+      if (password !== confirmPassword) {
+        toast.error(t("passwordMismatch"))
+        return
+      }
       const { error } = await authClient.signUp.email({
         name: name.trim(),
         email: email.trim(),
@@ -78,6 +83,17 @@ export function RegisterForm({ callbackUrl }: Props) {
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
+              minLength={8}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="reg-password-confirm">{t("confirmPassword")}</Label>
+            <InputConceal
+              id="reg-password-confirm"
+              autoComplete="password-confirm"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
               required
               minLength={8}
             />

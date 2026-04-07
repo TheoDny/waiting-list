@@ -84,6 +84,8 @@
     "hasAccount": "Already registered?",
     "signInLink": "Sign in",
     "tabPassword": "Password",
+    "confirmPassword": "Confirm password",
+    "passwordMismatch": "The passwords do not match.",
     "tabOtp": "Email OTP",
     "signIn": "Sign in",
     "sendCode": "Send code",
