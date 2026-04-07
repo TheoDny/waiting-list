@@ -83,7 +83,6 @@ export function AdminWaitlistClient({ waitlistId, waitlistName }: Props) {
     onSuccess: () => {
       toast.success(t("toastDeleted"))
       router.push("/waitlists/mine")
-      router.refresh()
     },
     onError: ({ error }) => toast.error(error.serverError ?? tc("error")),
   })

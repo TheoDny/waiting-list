@@ -1,14 +1,15 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { toast } from "sonner"
-import { authClient } from "@/lib/auth-client"
+import { InputConceal } from "@/components/input/input-conceal"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent } from "@/components/ui/card"
+import { authClient } from "@/lib/auth-client"
 import { useTranslations } from "next-intl"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import { toast } from "sonner"
 
 export function RegisterForm() {
   const router = useRouter()
@@ -35,7 +36,6 @@ export function RegisterForm() {
       }
       toast.success(t("toastAccountCreated"))
       router.push("/waitlists")
-      router.refresh()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : tc("error"))
     } finally {
@@ -70,9 +70,8 @@ export function RegisterForm() {
           </div>
           <div className="space-y-2">
             <Label htmlFor="reg-password">{tc("password")}</Label>
-            <Input
+            <InputConceal
               id="reg-password"
-              type="password"
               autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}

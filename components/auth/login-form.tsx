@@ -1,5 +1,6 @@
 "use client"
 
+import { InputConceal } from "@/components/input/input-conceal"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -10,6 +11,7 @@ import { useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "sonner"
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp"
 
 export function LoginForm() {
   const router = useRouter()
@@ -24,24 +26,21 @@ export function LoginForm() {
   async function onPasswordLogin(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
-    try {
-      const { error } = await authClient.signIn.email({
-        email: email.trim(),
-        password,
-        callbackURL: "/waitlists",
-      })
-      if (error) {
-        toast.error(error.message || t("toastLoginFailed"))
-        return
-      }
-      toast.success(t("toastConnected"))
-      router.push("/waitlists")
-      router.refresh()
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : tc("error"))
-    } finally {
-      setLoading(false)
+
+    const { error } = await authClient.signIn.email({
+      email: email.trim(),
+      password,
+      callbackURL: "/waitlists",
+    })
+
+    setLoading(false)
+    if (error) {
+      toast.error(error?.message || t("toastLoginFailed"))
+      return
     }
+
+    toast.success(t("toastConnected"))
+    router.push("/waitlists")
   }
 
   async function onSendOtp() {
@@ -52,38 +51,35 @@ export function LoginForm() {
     });
 
     setLoading(false)
-    if (error) {
-      toast.error(error.message || tc("error"))
+    setOtpSent(true)
+    if (error || !data?.success) {
+      toast.error(error?.message || tc("error"))
       return
     }
-
-    setOtpSent(true)
-    toast.success(t("toastCodeSent"))
   }
 
   async function onOtpLogin(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
 
-    const { data, error } = await authClient.emailOtp.sendVerificationOtp({
+    const { data, error } = await authClient.signIn.emailOtp({
       email: email.trim(),
-      type: "sign-in",
+      otp: otp.trim(),
     });
 
     setLoading(false)
     if (error) {
-      toast.error(error.message || tc("error"))
+      toast.error(error?.message || tc("error"))
       return
     }
 
     toast.success(t("toastConnected"))
     router.push("/waitlists")
-    router.refresh()
   }
 
   return (
     <Card>
-      <CardContent className="pt-6">
+      <CardContent>
         <Tabs defaultValue="password">
           <TabsList className="w-full">
             <TabsTrigger value="password" className="flex-1">
@@ -108,11 +104,11 @@ export function LoginForm() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="login-password">{tc("password")}</Label>
-                <Input
+                <InputConceal
                   id="login-password"
-                  type="password"
                   autoComplete="current-password"
                   value={password}
+                  minLength={8}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
@@ -143,14 +139,25 @@ export function LoginForm() {
                 <>
                   <div className="space-y-2">
                     <Label htmlFor="otp-code">{t("otpCode")}</Label>
-                    <Input
-                      id="otp-code"
-                      inputMode="numeric"
-                      autoComplete="one-time-code"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value)}
-                      required
-                    />
+                      <InputOTP
+                        id="emailOtp"
+                        inputMode="numeric"
+                        autoComplete="one-time-code"
+                        value={otp}
+                        onChange={(value) => setOtp(value)}
+                        maxLength={6}
+                        required
+                        className="w-full"
+                      >
+                        <InputOTPGroup className="w-full justify-center">
+                          <InputOTPSlot index={0} />
+                          <InputOTPSlot index={1} />
+                          <InputOTPSlot index={2} />
+                          <InputOTPSlot index={3} />
+                          <InputOTPSlot index={4} />
+                          <InputOTPSlot index={5} />
+                        </InputOTPGroup>
+                      </InputOTP>
                   </div>
                   <Button type="submit" className="w-full" disabled={loading}>
                     {t("verifyCode")}

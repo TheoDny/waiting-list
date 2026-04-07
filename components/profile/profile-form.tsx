@@ -1,6 +1,7 @@
 "use client"
 
 import { updateProfileNameAction } from "@/action/user.action"
+import { InputConceal } from "@/components/input/input-conceal"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -125,32 +126,35 @@ export function ProfileForm({ user }: { user: User }) {
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="current-password">{t("currentPassword")}</Label>
-            <Input
+            <InputConceal
               id="current-password"
-              type="password"
               autoComplete="current-password"
               value={currentPassword}
               onChange={(e) => setCurrentPassword(e.target.value)}
+              required
+              minLength={8}
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="new-password">{t("newPassword")}</Label>
-            <Input
+            <InputConceal
               id="new-password"
-              type="password"
               autoComplete="new-password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
+              required
+              minLength={8}
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="confirm-password">{t("confirmNewPassword")}</Label>
-            <Input
+            <InputConceal
               id="confirm-password"
-              type="password"
               autoComplete="new-password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              minLength={8}
             />
           </div>
           <Button
