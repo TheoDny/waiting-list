@@ -91,6 +91,7 @@ model Verification {
 model Waitlist {
   id              String                 @id @default(cuid())
   name            String                 @unique
+  description     String?
   isPublic        Boolean                @default(true)
   joinCode        String?                @unique
   visibilityMode  WaitlistVisibilityMode @default(VIEW_ALL)

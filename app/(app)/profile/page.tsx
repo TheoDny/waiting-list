@@ -7,11 +7,11 @@ import { redirect } from "next/navigation"
 export default async function ProfilePage() {
   const session = await getSession()
   if (!session?.user?.id) {
-    redirect("/login")
+    redirect("/")
   }
   const user = await getUserById(session.user.id)
   if (!user) {
-    redirect("/login")
+    redirect("/")
   }
   const t = await getTranslations("Profile")
   return (

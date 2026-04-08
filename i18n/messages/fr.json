@@ -128,7 +128,8 @@
     "toastJoinError": "Impossible de rejoindre",
     "toastRefreshError": "Actualisation impossible",
     "updatedWithin10d": " · À jour (< 10 j.)",
-    "loginToJoin": "Connectez-vous pour rejoindre cette liste."
+    "loginToJoin": "Connectez-vous pour rejoindre cette liste.",
+    "descriptionHeading": "Description"
   },
   "WaitlistMine": {
     "title": "Mes listes créées",
@@ -141,6 +142,9 @@
     "deleteDescription": "Tous les inscrits et l’historique seront supprimés.",
     "dialogCreateTitle": "Nouvelle liste",
     "uniqueName": "Nom (unique)",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Informations pour les inscrits (optionnel)",
+    "descriptionHint": "Jusqu’à {max} caractères.",
     "publicList": "Liste publique",
     "visibilityLabel": "Affichage pour les inscrits",
     "visibilityAll": "Tout le monde voit les pseudos",

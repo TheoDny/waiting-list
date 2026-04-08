@@ -9,7 +9,7 @@ export default async function AppSectionLayout({
 }) {
   const session = await getSession()
   if (!session?.user) {
-    redirect("/login")
+    redirect("/")
   }
   return (
     <div className="bg-background min-h-dvh">

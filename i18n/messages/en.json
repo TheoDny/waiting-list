@@ -128,7 +128,8 @@
     "toastJoinError": "Could not join",
     "toastRefreshError": "Could not refresh",
     "updatedWithin10d": " · Up to date (< 10 d.)",
-    "loginToJoin": "Sign in to join this list."
+    "loginToJoin": "Sign in to join this list.",
+    "descriptionHeading": "Description"
   },
   "WaitlistMine": {
     "title": "Lists I created",
@@ -141,6 +142,9 @@
     "deleteDescription": "All members and history will be removed.",
     "dialogCreateTitle": "New list",
     "uniqueName": "Name (unique)",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Information for members (optional)",
+    "descriptionHint": "Up to {max} characters.",
     "publicList": "Public list",
     "visibilityLabel": "Display for members",
     "visibilityAll": "Everyone sees nicknames",

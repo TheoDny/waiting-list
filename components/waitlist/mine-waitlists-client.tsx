@@ -23,8 +23,10 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Switch } from "@/components/ui/switch"
+import { MAX_WAITLIST_DESCRIPTION_LENGTH } from "@/lib/waitlist-config"
 import { cn } from "@/lib/utils"
 import { useTranslations } from "next-intl"
 import { useState } from "react"
@@ -32,6 +34,7 @@ import { useState } from "react"
 type Row = {
   id: string
   name: string
+  description: string | null
   isPublic: boolean
   paused: boolean
   visibilityMode: (typeof WaitlistVisibilityMode)[keyof typeof WaitlistVisibilityMode]
@@ -56,6 +59,7 @@ export function MineWaitlistsClient({ initial }: { initial: Initial }) {
   const [editPaused, setEditPaused] = useState(false)
 
   const [formName, setFormName] = useState("")
+  const [formDescription, setFormDescription] = useState("")
   const [formPublic, setFormPublic] = useState(true)
   const [formVis, setFormVis] = useState<(typeof WaitlistVisibilityMode)[keyof typeof WaitlistVisibilityMode]>(
     WaitlistVisibilityMode.VIEW_ALL
@@ -93,6 +97,7 @@ export function MineWaitlistsClient({ initial }: { initial: Initial }) {
 
   function openCreate() {
     setFormName("")
+    setFormDescription("")
     setFormPublic(true)
     setFormVis(WaitlistVisibilityMode.VIEW_ALL)
     setCreateOpen(true)
@@ -101,6 +106,7 @@ export function MineWaitlistsClient({ initial }: { initial: Initial }) {
   function openEdit(row: Row) {
     setEditRow(row)
     setFormName(row.name)
+    setFormDescription(row.description ?? "")
     setFormPublic(row.isPublic)
     setFormVis(row.visibilityMode)
     setEditPaused(row.paused)
@@ -187,6 +193,20 @@ export function MineWaitlistsClient({ initial }: { initial: Initial }) {
               <Label>{t("uniqueName")}</Label>
               <Input value={formName} onChange={(e) => setFormName(e.target.value)} />
             </div>
+            <div className="space-y-2">
+              <Label>{t("descriptionLabel")}</Label>
+              <Textarea
+                value={formDescription}
+                onChange={(e) => setFormDescription(e.target.value)}
+                placeholder={t("descriptionPlaceholder")}
+                rows={4}
+                maxLength={MAX_WAITLIST_DESCRIPTION_LENGTH}
+                aria-describedby="waitlist-desc-hint-create"
+              />
+              <p id="waitlist-desc-hint-create" className="text-muted-foreground text-xs">
+                {t("descriptionHint", { max: MAX_WAITLIST_DESCRIPTION_LENGTH })}
+              </p>
+            </div>
             <div className="flex items-center justify-between gap-2">
               <Label>{t("publicList")}</Label>
               <Switch checked={formPublic} onCheckedChange={setFormPublic} />
@@ -212,6 +232,7 @@ export function MineWaitlistsClient({ initial }: { initial: Initial }) {
               onClick={() =>
                 execCreate({
                   name: formName.trim(),
+                  description: formDescription,
                   isPublic: formPublic,
                   visibilityMode: formVis,
                 })
@@ -234,6 +255,20 @@ export function MineWaitlistsClient({ initial }: { initial: Initial }) {
                 <div className="space-y-2">
                   <Label>{tc("name")}</Label>
                   <Input value={formName} onChange={(e) => setFormName(e.target.value)} />
+                </div>
+                <div className="space-y-2">
+                  <Label>{t("descriptionLabel")}</Label>
+                  <Textarea
+                    value={formDescription}
+                    onChange={(e) => setFormDescription(e.target.value)}
+                    placeholder={t("descriptionPlaceholder")}
+                    rows={4}
+                    maxLength={MAX_WAITLIST_DESCRIPTION_LENGTH}
+                    aria-describedby="waitlist-desc-hint-edit"
+                  />
+                  <p id="waitlist-desc-hint-edit" className="text-muted-foreground text-xs">
+                    {t("descriptionHint", { max: MAX_WAITLIST_DESCRIPTION_LENGTH })}
+                  </p>
                 </div>
                 <div className="flex items-center justify-between gap-2">
                   <Label>{t("publicList")}</Label>
@@ -265,6 +300,7 @@ export function MineWaitlistsClient({ initial }: { initial: Initial }) {
                     execUpdate({
                       waitlistId: editRow.id,
                       name: formName.trim(),
+                      description: formDescription,
                       isPublic: formPublic,
                       visibilityMode: formVis,
                       paused: editPaused,

@@ -101,7 +101,7 @@ export function WaitlistDetailClient({
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
+        <div className="w-full">
           <h1 className="text-2xl font-semibold tracking-tight">{w.name}</h1>
           <div className="text-muted-foreground mt-2 flex flex-wrap gap-2 text-sm">
             {w.isPublic ? (
@@ -115,6 +115,14 @@ export function WaitlistDetailClient({
             <p className="text-muted-foreground mt-2 font-mono text-sm">
               {t("accessCode")} <span className="text-foreground">{w.joinCode}</span>
             </p>
+          ) : null}
+          {w.description ? (
+            <div className="mt-4 w-full">
+              <h2 className="text-muted-foreground mb-1.5 text-xs font-medium uppercase tracking-wide">
+                {t("descriptionHeading")}
+              </h2>
+              <p className="text-muted-foreground whitespace-pre-wrap text-sm leading-relaxed">{w.description}</p>
+            </div>
           ) : null}
         </div>
         <div className="flex flex-wrap gap-2">

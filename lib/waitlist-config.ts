@@ -20,3 +20,6 @@ export const REFRESH_COOLDOWN_DAYS = 7
 
 /** Members refreshed within this window count as "active" for ranking. */
 export const RANKING_ACTIVE_WINDOW_DAYS = 10
+
+/** Max length for optional waitlist description (create / update). */
+export const MAX_WAITLIST_DESCRIPTION_LENGTH = 2000

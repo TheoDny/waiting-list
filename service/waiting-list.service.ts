@@ -26,6 +26,13 @@ import {
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000
 
+/** Trims user-provided description; empty input is stored as `null`. */
+function normalizeWaitlistDescription(raw: string | undefined | null): string | null {
+  if (raw == null) return null
+  const t = raw.trim()
+  return t.length === 0 ? null : t
+}
+
 export async function findWaitlistIdByJoinCode(code: string) {
   const normalized = code.trim().toUpperCase()
   if (!normalized) return null
@@ -132,6 +139,7 @@ export type WaitlistDetailForUi = {
   waitlist: {
     id: string
     name: string
+    description: string | null
     isPublic: boolean
     joinCode: string | null
     visibilityMode: (typeof WaitlistVisibilityMode)[keyof typeof WaitlistVisibilityMode]
@@ -184,6 +192,7 @@ export async function getWaitlistDetailForUi(
       select: {
         id: true,
         name: true,
+        description: true,
         isPublic: true,
         joinCode: true,
         visibilityMode: true,
@@ -414,6 +423,7 @@ export async function createWaitlist(
   ownerId: string,
   input: {
     name: string
+    description?: string | null
     isPublic: boolean
     visibilityMode: (typeof WaitlistVisibilityMode)[keyof typeof WaitlistVisibilityMode]
   }
@@ -441,6 +451,7 @@ export async function createWaitlist(
   return prisma.waitlist.create({
     data: {
       name,
+      description: normalizeWaitlistDescription(input.description ?? null),
       isPublic: input.isPublic,
       joinCode,
       visibilityMode: input.visibilityMode,
@@ -454,6 +465,7 @@ export async function updateWaitlist(
   waitlistId: string,
   input: {
     name?: string
+    description?: string | null
     isPublic?: boolean
     visibilityMode?: (typeof WaitlistVisibilityMode)[keyof typeof WaitlistVisibilityMode]
     paused?: boolean
@@ -491,6 +503,9 @@ export async function updateWaitlist(
     where: { id: waitlistId },
     data: {
       ...(name !== undefined ? { name } : {}),
+      ...(input.description !== undefined
+        ? { description: normalizeWaitlistDescription(input.description) }
+        : {}),
       ...(input.visibilityMode !== undefined ? { visibilityMode: input.visibilityMode } : {}),
       ...(input.paused !== undefined ? { paused: input.paused } : {}),
       ...(input.isPublic !== undefined ? { isPublic: input.isPublic } : {}),

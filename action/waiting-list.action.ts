@@ -18,11 +18,17 @@ import {
   refreshWaitlistMembership,
   updateWaitlist,
 } from "@/service/waiting-list.service"
+import { MAX_WAITLIST_DESCRIPTION_LENGTH } from "@/lib/waitlist-config"
 import { getUserById } from "@/service/user.service"
 import { WaitlistVisibilityMode } from "../generated/prisma/enums"
 import { z } from "zod"
 
 const visibilitySchema = z.enum([WaitlistVisibilityMode.VIEW_ALL, WaitlistVisibilityMode.VIEW_YOURSELF])
+
+const optionalDescriptionSchema = z
+  .string()
+  .max(MAX_WAITLIST_DESCRIPTION_LENGTH)
+  .optional()
 
 export const listPublicWaitlistsAction = authedAction
   .inputSchema(z.object({ search: z.string().optional() }))
@@ -78,6 +84,7 @@ export const createWaitlistAction = authedAction
   .inputSchema(
     z.object({
       name: z.string().min(1),
+      description: optionalDescriptionSchema,
       isPublic: z.boolean(),
       visibilityMode: visibilitySchema,
     })
@@ -92,6 +99,7 @@ export const updateWaitlistAction = authedAction
     z.object({
       waitlistId: z.string().min(1),
       name: z.string().min(1).optional(),
+      description: optionalDescriptionSchema,
       isPublic: z.boolean().optional(),
       visibilityMode: visibilitySchema.optional(),
       paused: z.boolean().optional(),

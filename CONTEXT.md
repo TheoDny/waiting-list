@@ -11,7 +11,7 @@ Documentation technique du dépôt : structure, règles d'accès aux données, e
 
 | Dossier | Rôle |
 |--------|------|
-| [`app/`](app/) | App Router : zone connectée `(app)/`, zone sans session `(public)/` (listes publiques + détail), auth `login` / `register`, API [`app/api/auth/[...auth]/route.ts`](app/api/auth/[...auth]/route.ts). |
+| [`app/`](app/) | App Router : zone connectée `(app)/`, zone sans session `(public)/` (listes publiques + détail), API [`app/api/auth/[...auth]/route.ts`](app/api/auth/[...auth]/route.ts). **Pas de pages `app/login` ni `app/register`** : connexion / inscription invité via la modale [`AuthDialog`](components/dialog/AuthDialog.tsx) dans l’en-tête. |
 | [`action/`](action/) | Server Actions (`next-safe-action`) : validation Zod, session, appel des **services** uniquement. |
 | [`service/`](service/) | Logique métier + Prisma + envoi d'e-mails via `mail.service`. |
 | [`components/`](components/) | UI (shadcn / Base UI) et blocs métier (`waitlist/`, `auth/`, `layout/`). |
@@ -57,21 +57,22 @@ Composants génériques (Base UI + Tailwind + `cva`), sans accès Prisma ni acti
 | Fichier | Composant | Signature / props | Description |
 |---------|-----------|-----------------|-------------|
 | [`ConfirmDialog.tsx`](components/dialog/ConfirmDialog.tsx) | `ConfirmDialog` *(client)* | `open`, `title?`, `description?`, `onConfirm`, `onCancel` | Dialogue Oui/Non branché sur [`provider/ConfirmationProvider.tsx`](provider/ConfirmationProvider.tsx). |
+| [`AuthDialog.tsx`](components/dialog/AuthDialog.tsx) | `AuthDialog` *(client)* | *(aucune prop)* | Remplace les anciennes routes `/login` et `/register` : `Dialog` avec déclencheur stylé en bouton (`buttonVariants`), id **`login-dialog-trigger`** pour ouverture programmatique (ex. CTA « Se connecter » sur une page publique). Contenu : bascule locale `login` \| `register` entre [`LoginForm`](components/auth/login-form.tsx) et [`RegisterForm`](components/auth/register-form.tsx). `callbackUrl` passé aux formulaires = [`getSafeRedirectPath`](lib/utils.ts)(`pathname`) lorsque le chemin ne commence pas par `/login` ni `/register` (évite de renvoyer vers d’anciennes URLs réservées). |
 
 ### [`components/layout/`](components/layout/)
 
 | Fichier | Composant | Description |
 |---------|-----------|-------------|
 | [`app-header.tsx`](components/layout/app-header.tsx) | `AppHeader` *(async RSC)* | En-tête toujours rendu : session optionnelle + [`getUserById`](service/user.service.ts) si connecté ; délègue à `AppHeaderBar` (`isAuthenticated`, `isSuperAdmin`). |
-| [`app-header-bar.tsx`](components/layout/app-header-bar.tsx) | `AppHeaderBar` *(client)* | Invité : « Listes publiques », aide, langue, thème, lien `Nav.signIn` → `/login`. Connecté : nav complète (mes listes, inscriptions, code privé, super-admin si applicable), profil, déconnexion. Style actif via [`usePathname`](https://nextjs.org/docs/app/api-reference/functions/use-pathname). |
-| [`sign-out-button.tsx`](components/layout/sign-out-button.tsx) | `SignOutButton` *(client)* | `authClient.signOut()` puis redirection `/login`. |
+| [`app-header-bar.tsx`](components/layout/app-header-bar.tsx) | `AppHeaderBar` *(client)* | Invité : « Listes publiques », aide, langue, thème, **[`AuthDialog`](components/dialog/AuthDialog.tsx)** (connexion / création de compte en modale, plus de navigation vers `/login` ou `/register`). Connecté : nav complète (mes listes, inscriptions, code privé, super-admin si applicable), profil, déconnexion. Style actif via [`usePathname`](https://nextjs.org/docs/app/api-reference/functions/use-pathname). |
+| [`sign-out-button.tsx`](components/layout/sign-out-button.tsx) | `SignOutButton` *(client)* | `authClient.signOut()` puis `router.push("/")` et `router.refresh()` (retour zone publique, pas de page `/login`). |
 
 ### [`components/auth/`](components/auth/)
 
 | Fichier | Composant | Description |
 |---------|-----------|-------------|
-| [`login-form.tsx`](components/auth/login-form.tsx) | `LoginForm` *(client)* | Onglets mot de passe (`authClient.signIn.email`) et OTP (`authPost` vers `/email-otp/…`, `/sign-in/email-otp`). |
-| [`register-form.tsx`](components/auth/register-form.tsx) | `RegisterForm` *(client)* | Inscription `authClient.signUp.email`. |
+| [`login-form.tsx`](components/auth/login-form.tsx) | `LoginForm` *(client)* | Prop optionnelle `callbackUrl` : redirection après succès. Onglets mot de passe (`authClient.signIn.email`) et OTP (`authPost` vers `/email-otp/…`, `/sign-in/email-otp`). Utilisé dans [`AuthDialog`](components/dialog/AuthDialog.tsx) et réutilisable hors modale. |
+| [`register-form.tsx`](components/auth/register-form.tsx) | `RegisterForm` *(client)* | Prop optionnelle `callbackUrl`. Inscription `authClient.signUp.email`. Utilisé dans [`AuthDialog`](components/dialog/AuthDialog.tsx). |
 
 ### [`components/waitlist/`](components/waitlist/)
 
@@ -113,8 +114,8 @@ Voir [`.env.example`](.env.example) : limites `MAX_*`, SMTP, Better Auth, `DATAB
 | [`lib/prisma.ts`](lib/prisma.ts) | `default` PrismaClient | Singleton avec adaptateur `pg`. |
 | [`lib/safe-action.ts`](lib/safe-action.ts) | `actionClient`, `authedAction` | Client safe-action + middleware session obligatoire. |
 | [`lib/smtp.ts`](lib/smtp.ts) | `getSmtpTransport()` | Transport Nodemailer (exige `SMTP_HOST` / `SMTP_PORT`). |
-| [`lib/utils.ts`](lib/utils.ts) | `cn(...)` | Utilitaire Tailwind / clsx. |
-| [`lib/waitlist-config.ts`](lib/waitlist-config.ts) | `maxWaitlistsPerUser()`, `maxMembersPerWaitlist()`, `maxAdminLogsPerWaitlist()`, constantes `REFRESH_COOLDOWN_DAYS`, `RANKING_ACTIVE_WINDOW_DAYS` | Limites depuis `process.env`. |
+| [`lib/utils.ts`](lib/utils.ts) | `cn(...)`, `getSafeRedirectPath(pathname)` | Utilitaire Tailwind / clsx ; `getSafeRedirectPath` limite les redirections post-auth aux chemins internes sûrs (utilisé par `AuthDialog` / formulaires). |
+| [`lib/waitlist-config.ts`](lib/waitlist-config.ts) | `maxWaitlistsPerUser()`, `maxMembersPerWaitlist()`, `maxAdminLogsPerWaitlist()`, constantes `REFRESH_COOLDOWN_DAYS`, `RANKING_ACTIVE_WINDOW_DAYS`, `MAX_WAITLIST_DESCRIPTION_LENGTH` | Limites depuis `process.env` + longueur max de la description liste. |
 | [`lib/waitlist-ranking.ts`](lib/waitlist-ranking.ts) | `isActiveForRanking(lastRefreshedAt, now?)`, `sortMembersByRanking(members, now?)`, `rankInSortedList(sorted, userId, getUserId)` | Classement : actifs (rafraîchi ≤ 10 j) au-dessus ; tri join puis refresh. |
 
 ### `service/`
@@ -148,13 +149,14 @@ Toutes les actions : `"use server"`, schémas **Zod**, `authedAction` sauf menti
 
 | Fichier | Rôle |
 |---------|------|
-| [`prisma/schema.prisma`](prisma/schema.prisma) | Modèles `User` (+ `isSuperAdmin`), `Waitlist`, `WaitlistMember`, `WaitlistAdminLog`, enums `WaitlistVisibilityMode`, `WaitlistMemberStatus`. |
+| [`prisma/schema.prisma`](prisma/schema.prisma) | Modèles `User` (+ `isSuperAdmin`), `Waitlist` (+ `description` optionnelle), `WaitlistMember`, `WaitlistAdminLog`, enums `WaitlistVisibilityMode`, `WaitlistMemberStatus`. |
 | [`prisma/seed.ts`](prisma/seed.ts) | Crée / promeut le super-admin (`SEED_SUPER_ADMIN_*`). |
 
 ### Pages notables (`app/`)
 
 - `/` : redirection vers `/waitlists`.
-- `/login`, `/register` : formulaires Better Auth (mot de passe + OTP).
+- **Authentification invité** : pas de routes dédiées `/login` ni `/register` sous `app/` ; utiliser la modale **`AuthDialog`** dans l’en-tête (`AppHeader` / `AppHeaderBar`). Les formulaires Better Auth (mot de passe + OTP) vivent dans [`login-form.tsx`](components/auth/login-form.tsx) et [`register-form.tsx`](components/auth/register-form.tsx).
+- **Accès sans session au groupe `(app)/`** : [`app/(app)/layout.tsx`](app/(app)/layout.tsx) (et garde-fous comme [`profile/page.tsx`](app/(app)/profile/page.tsx)) redirigent vers `/` ; l’utilisateur peut ensuite ouvrir **`AuthDialog`** pour se connecter.
 - `/waitlists` : listes publiques + recherche (accessible sans session, layout `(public)/`).
 - `/waitlists/[id]` : détail et classement ; rejoindre nécessite une session (CTA connexion sinon). Liste privée : accès avec `?code=` ou membre / owner / super-admin.
 - `/waitlists/mine`, `/waitlists/joined` : listes créées / inscriptions.
