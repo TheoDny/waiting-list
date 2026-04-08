@@ -2,8 +2,8 @@
 
 import { InputConceal } from "@/components/input/input-conceal"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
 import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { authClient } from "@/lib/auth-client"
@@ -11,7 +11,6 @@ import { useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { toast } from "sonner"
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp"
 
 type Props = {
   callbackUrl?: string
@@ -26,6 +25,8 @@ export function LoginForm({ callbackUrl }: Props) {
   const [otp, setOtp] = useState("")
   const [otpSent, setOtpSent] = useState(false)
   const [loading, setLoading] = useState(false)
+
+
 
   async function onPasswordLogin(e: React.FormEvent) {
     e.preventDefault()
@@ -81,8 +82,7 @@ export function LoginForm({ callbackUrl }: Props) {
   }
 
   return (
-    <Card>
-      <CardContent>
+
         <Tabs defaultValue="password">
           <TabsList className="w-full">
             <TabsTrigger value="password" className="flex-1">
@@ -169,8 +169,6 @@ export function LoginForm({ callbackUrl }: Props) {
               )}
             </form>
           </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
+    </Tabs>
   )
 }

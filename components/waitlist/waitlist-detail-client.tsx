@@ -48,7 +48,7 @@ export function WaitlistDetailClient({
   const { confirm } = useConfirm()
   const t = useTranslations("WaitlistDetail")
   const tc = useTranslations("Common")
-  const tnav = useTranslations("Nav")
+  const tAuth = useTranslations("Auth")
   const tb = useTranslations("WaitlistBadge")
   const tm = useTranslations("MemberStatus")
   const [joinOpen, setJoinOpen] = useState(false)
@@ -191,9 +191,14 @@ export function WaitlistDetailClient({
           ) : (
             <div className="space-y-3">
               <p className="text-muted-foreground text-sm">{t("loginToJoin")}</p>
-                <Link href={`/login?callbackUrl=/waitlists/${w.id}`} className={cn(buttonVariants())}>
-                {tnav("signIn")}
-              </Link>
+                <div className={cn(buttonVariants())} onClick={() => {
+                  const loginDialogTrigger = document.getElementById("login-dialog-trigger")
+                  if (loginDialogTrigger) {
+                    loginDialogTrigger.click()
+                  }
+                }}>
+                  {tAuth("signIn")}
+                </div>
             </div>
           )
       ) : (

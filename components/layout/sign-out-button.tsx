@@ -7,18 +7,18 @@ import { useRouter } from "next/navigation"
 
 export function SignOutButton() {
   const router = useRouter()
-  const t = useTranslations("Nav")
+  const tAuth = useTranslations("Auth")
   return (
     <Button
       variant="outline"
       type="button"
       onClick={async () => {
         await authClient.signOut()
-        router.push("/login")
+        router.push("/")
         router.refresh()
       }}
     >
-      {t("signOut")}
+      {tAuth("signOut")}
     </Button>
   )
 }

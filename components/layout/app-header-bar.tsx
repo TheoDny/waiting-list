@@ -1,9 +1,9 @@
 "use client"
 
+import { AuthDialog } from "@/components/dialog/AuthDialog"
 import { SignOutButton } from "@/components/layout/sign-out-button"
 import { LanguageSelector } from "@/components/select/select-language"
 import { SelectTheme } from "@/components/select/select-theme"
-import { buttonVariants } from "@/components/ui/button"
 import {
   HoverCard,
   HoverCardContent,
@@ -142,9 +142,7 @@ export function AppHeaderBar({ isAuthenticated, isSuperAdmin }: AppHeaderBarProp
         {isAuthenticated ? (
           <SignOutButton />
         ) : (
-          <Link href="/login" className={buttonVariants({ variant: "outline" })}>
-            {t("signIn")}
-          </Link>
+            <AuthDialog />
         )}
       </div>
     </div>
