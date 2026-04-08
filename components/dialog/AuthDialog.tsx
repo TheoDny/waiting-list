@@ -1,15 +1,22 @@
 "use client"
 
 import { LoginForm } from "@/components/auth/login-form";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { getSafeRedirectPath } from "@/lib/utils";
+import { UserCircleIcon } from "@hugeicons/core-free-icons";
+import { HugeiconsIcon } from "@hugeicons/react";
 import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { RegisterForm } from "../auth/register-form";
 
-export function AuthDialog() {
+export type AuthDialogProps = {
+  /** Bouton icône seulement (barre mobile). */
+  compact?: boolean
+}
+
+export function AuthDialog({ compact = false }: AuthDialogProps) {
   const [authAction, setAuthAction] = useState<"login" | "register">("login")
   const t = useTranslations("Auth")
 
@@ -21,9 +28,27 @@ export function AuthDialog() {
 
   return (
     <Dialog>
-      <DialogTrigger>
-        <div id="login-dialog-trigger" className={buttonVariants({ variant: "outline" })}>{t("signIn")}</div>
-      </DialogTrigger>
+      {compact ? (
+        <DialogTrigger
+          render={
+            <Button
+              id="login-dialog-trigger"
+              variant="outline"
+              size="icon-sm"
+              type="button"
+              aria-label={t("signIn")}
+            />
+          }
+        >
+          <HugeiconsIcon icon={UserCircleIcon} strokeWidth={2} className="size-4" />
+        </DialogTrigger>
+      ) : (
+        <DialogTrigger>
+          <div id="login-dialog-trigger" className={buttonVariants({ variant: "outline" })}>
+            {t("signIn")}
+          </div>
+        </DialogTrigger>
+      )}
       <DialogContent>
         {authAction === "login" ? 
         <>

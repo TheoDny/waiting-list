@@ -19,6 +19,8 @@ interface LanguageSelectorProps
         VariantProps<typeof buttonVariants> {
     asChild?: boolean
     showText?: boolean
+    /** Sur mobile, désactiver l’ouverture au survol pour un menu utilisable au doigt. */
+    openOnHover?: boolean
     languages?: Array<{ code: string }>
 }
 
@@ -30,8 +32,9 @@ const defaultLanguages = [
 
 export function LanguageSelector({
     showText = true,
+    openOnHover = true,
     languages = defaultLanguages,
-    ...props
+    className,
 }: LanguageSelectorProps) {
     const currentLocale = useLocale()
     const t = useTranslations("Language")
@@ -50,12 +53,20 @@ export function LanguageSelector({
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger openOnHover={true}>
+            <DropdownMenuTrigger openOnHover={openOnHover}>
                 <div
-                    className={buttonVariants({ variant: "outline", className: "flex gap-2 items-center" })}
+                    className={cn(
+                        buttonVariants({
+                            variant: "outline",
+                            size: showText ? "default" : "icon-sm",
+                            className: "flex items-center gap-2",
+                        }),
+                        className,
+                    )}
+                    aria-label={!showText ? t("ariaLabel") : undefined}
                 >
-                    <HugeiconsIcon icon={Globe02Icon} className="h-4 w-4" />
-                    {showText && <span className="">{currentLanguage}</span>}
+                    <HugeiconsIcon icon={Globe02Icon} className="size-4" />
+                    {showText && <span>{currentLanguage}</span>}
                 </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="min-w-24 flex flex-col items-center">

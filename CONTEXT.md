@@ -124,7 +124,7 @@ Voir [`.env.example`](.env.example) : limites `MAX_*`, SMTP, Better Auth, `DATAB
 |---------|----------------------|-------------|
 | [`service/mail.service.ts`](service/mail.service.ts) | Idem + `getTranslations` / `getLocale` (`next-intl`, namespace `Email`) pour construire les `*Copy` passés aux gabarits | Envoi SMTP + i18n des e-mails. |
 | [`service/user.service.ts`](service/user.service.ts) | `getUserById`, `updateUserDisplayName`, `isEmailTakenByOther` | Profil utilisateur (Prisma). |
-| [`service/waiting-list.service.ts`](service/waiting-list.service.ts) | `findWaitlistIdByJoinCode`, `listPublicWaitlists`, `listAllWaitlistsForSuperAdmin`, `listPrivateWaitlistsForSuperAdmin`, `assertWaitlistAccess`, `getWaitlistDetailForUi`, `listMyOwnedWaitlists`, `listMyJoinedWaitlists`, `JoinedWaitlistSummary`, `createWaitlist`, `updateWaitlist`, `deleteWaitlistByOwner`, `joinWaitlist`, `leaveWaitlist`, `refreshWaitlistMembership` | Cycle de vie des listes et inscriptions. |
+| [`service/waiting-list.service.ts`](service/waiting-list.service.ts) | `findWaitlistIdByJoinCode`, `listPublicWaitlists`, `listAllWaitlistsForSuperAdmin`, `assertWaitlistAccess`, `getWaitlistDetailForUi`, `listMyOwnedWaitlists`, `listMyJoinedWaitlists`, `JoinedWaitlistSummary`, `createWaitlist`, `updateWaitlist`, `deleteWaitlistByOwner`, `joinWaitlist`, `leaveWaitlist`, `refreshWaitlistMembership` | Cycle de vie des listes et inscriptions. |
 | [`service/waiting-list-manage.service.ts`](service/waiting-list-manage.service.ts) | `assertCanManageWaitlist`, `getWaitlistMetaForAdmin`, `appendAdminLog`, `listAdminLogs`, `listMembersForAdmin`, `setMemberStatus`, `deleteWaitlistAsAdmin` | Admin liste + journal (tronqué à `MAX_LOG_ACTION_BY_WAITLIST`). |
 
 ### `action/`
@@ -164,7 +164,6 @@ Toutes les actions : `"use server"`, schémas **Zod**, `authedAction` sauf menti
 - `/profile` : pseudo, changement de mot de passe (session + mot de passe actuel), changement d'e-mail par OTP.
 - `/admin/waitlists/[id]` : onglets en attente / validés / refusés / journal.
 - `/super/waitlists` : toutes les listes (super-admin uniquement).
-- `/super/waitlists/private` : listes privées uniquement (`isPublic: false`, super-admin uniquement).
 
 ---
 

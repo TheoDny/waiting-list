@@ -78,24 +78,6 @@ export async function listAllWaitlistsForSuperAdmin(
   })
 }
 
-/** Private waitlists only (`isPublic: false`). Super-admin UI; enforce role at the route / action layer. */
-export async function listPrivateWaitlistsForSuperAdmin(
-  search: string | undefined
-) {
-  const term = search?.trim()
-  return prisma.waitlist.findMany({
-    where: {
-      isPublic: false,
-      ...(term ? { name: { contains: term, mode: "insensitive" } } : {}),
-    },
-    orderBy: { createdAt: "desc" },
-    include: {
-      owner: { select: { id: true, name: true, email: true } },
-      _count: { select: { members: true } },
-    },
-  })
-}
-
 export async function assertWaitlistAccess(
   waitlistId: string,
   userId: string | null,

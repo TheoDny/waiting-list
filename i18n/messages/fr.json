@@ -1,12 +1,14 @@
 {
   "Language": {
     "en": "Anglais",
-    "fr": "Français"
+    "fr": "Français",
+    "ariaLabel": "Choisir la langue"
   },
   "Theme": {
     "light": "Clair",
     "dark": "Sombre",
-    "system": "Système"
+    "system": "Système",
+    "ariaLabel": "Thème d’affichage"
   },
   "Common": {
     "cancel": "Annuler",
@@ -53,12 +55,13 @@
     "pauseShort": "Pause"
   },
   "Nav": {
+    "openMenu": "Ouvrir le menu",
+    "menuTitle": "Navigation",
     "publicWaitlists": "Listes publiques",
     "myLists": "Mes listes",
     "joined": "Inscriptions",
     "privateCode": "Code privé",
     "superAdmin": "Super admin",
-    "superAdminPrivate": "Listes privées",
     "profile": "Profil",
     "helpWaitlists": {
       "ariaLabel": "Comment fonctionnent les listes d’attente et le classement",
@@ -84,6 +87,8 @@
     "signIn": "Connexion",
     "signOut": "Déconnexion",
     "signInLink": "Connexion",
+    "signOutConfirmTitle": "Déconnexion",
+    "signOutConfirmDescription": "Voulez-vous vraiment vous déconnecter ?",
     "tabPassword": "Mot de passe",
     "confirmPassword": "Confirmer le mot de passe",
     "passwordMismatch": "Les mots de passe ne correspondent pas.",
@@ -277,8 +282,7 @@
     "titlePrivate": "Listes d’attente privées (super admin)",
     "subtitlePrivate": "Listes absentes de l’annuaire public (code d’invitation ou accès direct uniquement).",
     "cardLine": "{visibility} · {email} · {count} {membersLabel}",
-    "empty": "Aucune liste ne correspond à votre recherche.",
-    "emptyPrivate": "Aucune liste privée ne correspond à votre recherche."
+    "empty": "Aucune liste ne correspond à votre recherche."
   },
   "Profile": {
     "title": "Mon profil",

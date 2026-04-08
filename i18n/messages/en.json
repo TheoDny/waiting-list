@@ -1,12 +1,14 @@
 {
   "Language": {
     "en": "English",
-    "fr": "Français"
+    "fr": "Français",
+    "ariaLabel": "Choose language"
   },
   "Theme": {
     "light": "Light",
     "dark": "Dark",
-    "system": "System"
+    "system": "System",
+    "ariaLabel": "Display theme"
   },
   "Common": {
     "cancel": "Cancel",
@@ -53,12 +55,13 @@
     "pauseShort": "Paused"
   },
   "Nav": {
+    "openMenu": "Open menu",
+    "menuTitle": "Navigation",
     "publicWaitlists": "Public waitlists",
     "myLists": "My lists",
     "joined": "My sign-ups",
     "privateCode": "Private code",
     "superAdmin": "Super admin",
-    "superAdminPrivate": "Private waitlists",
     "profile": "Profile",
     "helpWaitlists": {
       "ariaLabel": "How waitlists work and how ranking works",
@@ -84,6 +87,8 @@
     "signIn": "Sign in",
     "signOut": "Sign out",
     "signInLink": "Sign in",
+    "signOutConfirmTitle": "Sign out",
+    "signOutConfirmDescription": "Are you sure you want to sign out?",
     "tabPassword": "Password",
     "confirmPassword": "Confirm password",
     "passwordMismatch": "The passwords do not match.",
@@ -277,8 +282,7 @@
     "titlePrivate": "Private waitlists (super admin)",
     "subtitlePrivate": "Lists that are not discoverable in the public directory (join code or invite only).",
     "cardLine": "{visibility} · {email} · {count} {membersLabel}",
-    "empty": "No list matches your search.",
-    "emptyPrivate": "No private list matches your search."
+    "empty": "No list matches your search."
   },
   "Profile": {
     "title": "My profile",

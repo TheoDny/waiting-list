@@ -10,7 +10,7 @@ export async function AppHeader() {
     : false
 
   return (
-    <header className="border-b bg-background/80 backdrop-blur-sm">
+    <header className="border-b bg-background/80 pt-[env(safe-area-inset-top)] backdrop-blur-sm">
       <AppHeaderBar isAuthenticated={Boolean(userId)} isSuperAdmin={isSuperAdmin} />
     </header>
   )

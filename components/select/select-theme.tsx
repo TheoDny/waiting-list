@@ -1,6 +1,7 @@
 "use client"
 
 import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -18,20 +19,33 @@ interface SelectThemeButtonProps
     extends React.ButtonHTMLAttributes<HTMLButtonElement>,
         VariantProps<typeof buttonVariants> {
     asChild?: boolean
+    openOnHover?: boolean
+    /** Bouton carré icône (barre mobile). */
+    compact?: boolean
 }
 
-export function SelectTheme(props: SelectThemeButtonProps) {
+export function SelectTheme({
+    openOnHover = true,
+    compact = false,
+    className,
+}: SelectThemeButtonProps) {
     const { setTheme } = useTheme()
     const t = useTranslations("Theme")
+    const iconClass = compact ? "size-4" : "h-[1.2rem] w-[1.2rem]"
 
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger openOnHover={true}>
+            <DropdownMenuTrigger openOnHover={openOnHover}>
                 <div
-                    className={buttonVariants({ variant: "outline", className: "self-center cursor-pointer" })}
+                    className={buttonVariants({
+                        variant: "outline",
+                        size: compact ? "icon-sm" : "default",
+                        className: cn("relative cursor-pointer self-center", className),
+                    })}
+                    aria-label={t("ariaLabel")}
                 >
-                    <HugeiconsIcon icon={Sun02Icon} className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                    <HugeiconsIcon icon={Moon02Icon} className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                    <HugeiconsIcon icon={Sun02Icon} className={`${iconClass} rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0`} />
+                    <HugeiconsIcon icon={Moon02Icon} className={`absolute ${iconClass} rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100`} />
                 </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="min-w-24 flex flex-col items-center">
