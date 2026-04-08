@@ -10,11 +10,15 @@ export function intlLocaleFor(nextIntlLocale: string): string {
   return "en-US"
 }
 
-export function getSafeRedirectPath(raw: string | null | undefined): string {
-  if (raw == null || typeof raw !== "string") return "waitlists"
+export function getSafeRedirectPath(
+  raw: string | null | undefined
+): string | undefined {
+  if (raw == null || typeof raw !== "string") return undefined
+
   const trimmed = raw.trim()
-  if (!trimmed.startsWith("/")) return "waitlists"
-  if (trimmed.startsWith("//")) return "waitlists"
-  if (trimmed.includes("://")) return "waitlists"
+  if (trimmed === "") return undefined
+  if (!trimmed.startsWith("/")) return undefined
+  if (trimmed.startsWith("//")) return undefined
+  if (trimmed.includes("://")) return undefined
   return trimmed
 }
