@@ -4,8 +4,9 @@ import { getLocale, getMessages } from "next-intl/server";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { Geist, Geist_Mono } from "next/font/google";
 
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { AppHeader } from "@/components/layout/app-header";
 import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { ConfirmDialogProvider } from "@/provider/ConfirmationProvider";
 import { NextIntlClientProvider } from "next-intl";
 import "./globals.css";
@@ -38,7 +39,7 @@ export default async function RootLayout({
           href="/favicon.svg"
         />
       </head>
-      <body>
+      <body className="bg-background min-h-dvh">
         <NextThemesProvider
           attribute="class"
           defaultTheme="system"
@@ -48,7 +49,10 @@ export default async function RootLayout({
           <TooltipProvider delay={100}>
             <NextIntlClientProvider locale={locale} messages={messages}>
               <ConfirmDialogProvider>
-                {children}
+                <AppHeader />
+                <main className="mx-auto max-w-5xl px-4 py-8">
+                  {children}
+                </main>
                 <Toaster richColors closeButton position="top-center" />
               </ConfirmDialogProvider>
             </NextIntlClientProvider>

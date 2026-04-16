@@ -1,4 +1,3 @@
-import { AppHeader } from "@/components/layout/app-header"
 import { getSession } from "@/lib/auth-server"
 import { redirect } from "next/navigation"
 
@@ -11,10 +10,5 @@ export default async function AppSectionLayout({
   if (!session?.user) {
     redirect("/")
   }
-  return (
-    <div className="bg-background min-h-dvh">
-      <AppHeader />
-      <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
-    </div>
-  )
+  return children
 }

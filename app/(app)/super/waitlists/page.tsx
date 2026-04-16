@@ -6,13 +6,41 @@ import { getUserById } from "@/service/user.service"
 import { listAllWaitlistsForSuperAdmin } from "@/service/waiting-list.service"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 import { PublicWaitlistSearch } from "@/components/waitlist/public-waitlist-search"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { Suspense } from "react"
 
 type Props = { searchParams: Promise<{ q?: string }> }
 
-export default async function SuperWaitlistsPage({ searchParams }: Props) {
+function SuperWaitlistsPageSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <Skeleton className="h-8 w-56" />
+        <Skeleton className="h-4 w-full max-w-xl" />
+      </div>
+      <Skeleton className="h-10 w-full" />
+      <ul className="grid gap-3 sm:grid-cols-2">
+        {Array.from({ length: 4 }).map((_, index) => (
+          <li key={index}>
+            <div className="rounded-xl border p-6 space-y-3">
+              <Skeleton className="h-5 w-2/3" />
+              <Skeleton className="h-4 w-full" />
+              <div className="flex gap-2 pt-2">
+                <Skeleton className="h-8 w-20" />
+                <Skeleton className="h-8 w-20" />
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+async function SuperWaitlistsPageContent({ searchParams }: Props) {
   const { q } = await searchParams
   const session = await getSession()
   if (!session?.user?.id) {
@@ -69,5 +97,13 @@ export default async function SuperWaitlistsPage({ searchParams }: Props) {
       </ul>
       {rows.length === 0 ? <p className="text-muted-foreground text-sm">{t("empty")}</p> : null}
     </div>
+  )
+}
+
+export default function SuperWaitlistsPage(props: Props) {
+  return (
+    <Suspense fallback={<SuperWaitlistsPageSkeleton />}>
+      <SuperWaitlistsPageContent searchParams={props.searchParams} />
+    </Suspense>
   )
 }
